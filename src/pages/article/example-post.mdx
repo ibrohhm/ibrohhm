@@ -1,0 +1,39 @@
+---
+layout: ../../layouts/Layout.astro
+title: My First Post
+description: An example article written in MDX, mixing markdown prose with embedded components.
+article: true
+---
+
+import BarChart from '../../components/BarChart.astro';
+
+# My First Post
+
+This is example article written in **MDX** — markdown plus JSX components.
+
+## Why MDX
+
+- Write prose in plain markdown
+- Drop in components when needed, e.g. below
+
+<div style="padding: 1rem; border: 1px solid #ccc; border-radius: 8px;">
+	This block is plain HTML/JSX embedded directly in markdown.
+</div>
+
+## Chart example
+
+Component embedded right in markdown, data passed as props:
+
+<BarChart data={[
+	{ label: 'Jan', value: 30 },
+	{ label: 'Feb', value: 55 },
+	{ label: 'Mar', value: 42 },
+]} />
+
+## Code block
+
+```js
+console.log('mdx supports fenced code too');
+```
+
+Static — builds to plain HTML, ships to GitHub Pages fine.

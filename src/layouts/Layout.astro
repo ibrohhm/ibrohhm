@@ -1,3 +1,19 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+	frontmatter?: { title?: string; description?: string; article?: boolean };
+	article?: boolean;
+}
+
+const { title, description, frontmatter, article } = Astro.props;
+const pageTitle = title ?? frontmatter?.title ?? 'Astro Basics';
+const pageDescription =
+	description ?? frontmatter?.description ?? 'Software engineer — portfolio and technical writing.';
+const isArticle = article ?? frontmatter?.article ?? false;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifibrohim.me');
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,18 +22,168 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{pageTitle}</title>
+		<meta name="description" content={pageDescription} />
+		<link rel="canonical" href={canonicalURL} />
+		<meta property="og:type" content={isArticle ? 'article' : 'website'} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={pageDescription} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={pageDescription} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
 	<body>
-		<slot />
+		{
+			isArticle ? (
+				<div class="article">
+					<a class="back-link" href="/">
+						&larr; Ibrohim Syarif
+					</a>
+					<slot />
+				</div>
+			) : (
+				<slot />
+			)
+		}
 	</body>
 </html>
 
-<style>
+<style is:global>
+	:root {
+		--color-plum: oklch(0.38 0.15 315);
+		--color-plum-deep: oklch(0.28 0.13 315);
+		--color-amber: oklch(0.52 0.14 70);
+		--color-bg: oklch(1 0 0);
+		--color-surface: oklch(0.96 0.005 315);
+		--color-ink: oklch(0.18 0.02 315);
+		--color-muted: oklch(0.48 0.01 315);
+
+		--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
+		--font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+			sans-serif;
+		--font-mono: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
+	}
+
 	html,
 	body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		background: var(--color-bg);
+		color: var(--color-ink);
+	}
+
+	a:focus-visible,
+	button:focus-visible {
+		outline: 2px solid var(--color-plum);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	.article {
+		width: min(90%, 70ch);
+		margin: 0 auto;
+		padding: 3rem 0;
+		font-family: var(--font-body);
+		font-size: 1.125rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+	}
+
+	.article a {
+		color: var(--color-plum);
+	}
+
+	.article a:hover {
+		text-decoration-color: var(--color-amber);
+	}
+
+	.back-link {
+		display: inline-block;
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-muted);
+		text-decoration: none;
+		margin-bottom: 2rem;
+	}
+
+	.back-link:hover {
+		color: var(--color-plum);
+	}
+
+	.article h1,
+	.article h2,
+	.article h3 {
+		font-family: var(--font-display);
+		font-weight: 400;
+		text-wrap: balance;
+	}
+
+	.article h1 {
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: var(--color-plum);
+		margin: 0 0 1.5rem;
+	}
+
+	.article h2 {
+		font-size: 1.5rem;
+		line-height: 1.3;
+		margin: 2.5rem 0 1rem;
+	}
+
+	.article h3 {
+		font-size: 1.25rem;
+		margin: 2rem 0 0.75rem;
+	}
+
+	.article p {
+		margin: 0 0 1.25rem;
+		text-wrap: pretty;
+	}
+
+	.article ul,
+	.article ol {
+		margin: 0 0 1.25rem;
+		padding-left: 1.5rem;
+	}
+
+	.article li {
+		margin-bottom: 0.5rem;
+	}
+
+	.article code {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		background: var(--color-surface);
+		padding: 0.15em 0.4em;
+		border-radius: 4px;
+	}
+
+	.article pre {
+		padding: 1.25rem;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin: 0 0 1.5rem;
+	}
+
+	.article pre code {
+		background: none;
+		padding: 0;
+		font-size: 0.875rem;
+	}
+
+	.article img,
+	.article svg {
+		max-width: 100%;
 	}
 </style>

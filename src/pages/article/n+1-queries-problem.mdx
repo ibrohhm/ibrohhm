@@ -1,0 +1,50 @@
+---
+layout: ../../layouts/Layout.astro
+title: Know Better About N+1 Queries Problem
+description: A common database performance issue when fetching parent records and their associated child records, and how eager loading fixes it.
+article: true
+---
+
+# Know Better About N+1 Queries Problem
+
+## Overview
+
+This article addresses a common database performance issue developers encounter when retrieving parent records and their associated child records. The problem illustrated using a User and Transaction model relationship.
+
+## The Problem Illustrated
+
+The initial approach fetches all users, then queries transactions individually for each user:
+
+```ruby
+def load_data(user_ids)
+    result = []
+    users = User.where(id: user_ids)
+    users.each do |user|
+        result << { user: user, transactions: user.transactions }
+    end
+    result
+end
+```
+
+With three users, this generates 4 database queries: one for users and three separate queries for each user's transactions.
+
+## Understanding N+1 Queries
+
+This is common problem in database query, it will execute the query one-by-one for all instance instead of 1 or 2 queries. The performance impact grows with data volume, potentially causing timeout issues.
+
+## The Solution: Eager Loading
+
+The `.includes` method in Ruby on Rails loads associated data efficiently:
+
+```ruby
+def load_data_with_eager_load(user_ids)
+    result = []
+    users = User.includes(:transactions).where(id: user_ids)
+    users.each do |user|
+        result << { user: user, transactions: user.transactions }
+    end
+    result
+end
+```
+
+This approach reduces queries to just two: one fetching users and another fetching all their transactions in a single batch operation, significantly improving performance regardless of dataset size.

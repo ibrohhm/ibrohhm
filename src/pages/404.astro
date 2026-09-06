@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page not found — Ibrohim Syarif" description="This page doesn't exist.">
+	<div class="not-found">
+		<p class="code">404</p>
+		<h1>Page not found</h1>
+		<p class="message">That page doesn't exist, or the link is out of date.</p>
+		<a class="home-link" href="/">&larr; Back to homepage</a>
+	</div>
+</Layout>
+
+<style>
+	.not-found {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		max-width: 640px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.code {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 500;
+		letter-spacing: 0.01em;
+		color: var(--color-muted);
+		margin: 0 0 0.5rem;
+	}
+
+	h1 {
+		font-family: var(--font-display);
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-weight: 400;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: var(--color-plum);
+		margin: 0 0 1.25rem;
+		text-wrap: balance;
+	}
+
+	.message {
+		font-family: var(--font-body);
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: var(--color-ink);
+		margin: 0 0 2rem;
+	}
+
+	.home-link {
+		font-family: var(--font-body);
+		font-size: 1rem;
+		font-weight: 500;
+		color: var(--color-ink);
+		text-decoration: none;
+		width: fit-content;
+		border-bottom: 1px solid var(--color-ink);
+		padding-bottom: 0.2rem;
+		transition: color 0.2s, border-color 0.2s;
+	}
+
+	.home-link:hover {
+		color: var(--color-plum);
+		border-color: var(--color-plum);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.home-link {
+			transition: none;
+		}
+	}
+</style>

@@ -1,0 +1,82 @@
+---
+layout: ../../layouts/Layout.astro
+title: Know Better About N+1 Queries Problem
+description: A common database performance issue when fetching parent records and their associated child records, and how eager loading fixes it.
+article: true
+---
+
+# Know Better About N+1 Queries Problem
+
+## Overview
+
+In the engineering process we often face the case of querying all the data based on its parent, and the data will be used for some reason.
+For example, the users table has a one-to-many correlation with the transactions table, and your job is to get all users and their transactions.
+
+```go
+func LoadData() ([]LoadResult, error) {
+      users, _ := GetUsers()
+      result := make([]LoadResult, 0, len(users))
+      for _, u := range users {
+              txs, _ := GetTransactionByUserID(u.ID)
+              result = append(result, LoadResult{User: u, Transactions: txs})
+      }
+      return result, nil
+}
+```
+It's really simple logic, but is it good enough? Is it bad? Can our service endure high throughput? Is there any way to make it more efficient?
+
+## Look Inside the Query
+
+The query depends on the number of users, so let's say we have three users with id 1, 2, and 3. The queries from that code should look like this.
+The first one queries all the users based on the user_ids, and the 3 others are queries to fetch the transactions for each user.
+
+```sql
+SELECT "users".* FROM "users"
+SELECT "transactions".* FROM "transactions" WHERE "transactions"."user_id" = 1
+SELECT "transactions".* FROM "transactions" WHERE "transactions"."user_id" = 2
+SELECT "transactions".* FROM "transactions" WHERE "transactions"."user_id" = 3
+```
+
+What happens if the user_ids list is huge? Will we query to fetch the transactions as many times as the number of users we have? Now we're facing the N+1 queries problem.
+
+## N+1 Query Problem
+
+This is a common problem in database queries: it executes the query one-by-one for every instance instead of 1 or 2 queries.
+In the example above we fetch all three users' data, then continue with a query for all the transactions for each user — that's 4 queries (1+3).
+If there are N users' worth of data, first it fetches all N users, then continues to query the transactions for each user, so it's called N+1 queries.
+
+The problem with N+1 queries is that each query takes some amount of time — the performance impact grows with data volume.
+
+## The Solution
+
+Instead of querying the transactions one-by-one, gather all the user_ids first, then query the transactions with all user_ids in one batch.
+
+```go
+func LoadData() ([]LoadResult, error) {
+      users, _ := GetUsers()
+      userIDs := make([]int64, 0, len(users))
+      for _, u := range users {
+              userIDs = append(userIDs, u.ID)
+      }
+
+      txs, _ := GetTransactionByUserIDs(userIDs)
+
+      txsByUserID := make(map[int64][]Transaction, len(users))
+      for _, tx := range txs {
+              txsByUserID[tx.UserID] = append(txsByUserID[tx.UserID], tx)
+      }
+
+      result := make([]LoadResult, 0, len(users))
+      for _, u := range users {
+              result = append(result, LoadResult{User: u, Transactions: txsByUserID[u.ID]})
+      }
+      return result, nil
+}
+```
+
+This approach reduces queries to just two: one fetching users and another fetching all their transactions in a single batch operation, then a cheap in-memory grouping step — significantly improving performance regardless of dataset size.
+
+## Wrap Up
+
+N+1 queries happen whenever you fetch a parent record, then loop over it to fetch each child record one by one. It's easy to miss because the code reads simply and works fine in development with a handful of rows
+Next time a query feels slow, count how many times it's actually hitting the database. If that number scales with your row count, you've found your N+1.

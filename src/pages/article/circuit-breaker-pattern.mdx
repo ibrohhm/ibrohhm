@@ -1,0 +1,128 @@
+---
+layout: ../../layouts/Layout.astro
+title: Circuit Breaker Pattern
+description: Timeout stops your service from crashing, but it doesn't stop you from wasting time and resources on a partner you already know is down. Circuit breaker does.
+article: true
+---
+
+import LineChart from '../../components/LineChart.astro';
+import PlantUML from '../../components/PlantUML.astro';
+
+# Circuit Breaker Pattern
+
+Integrating with an external service often means dealing with unexpected behavior that impacts our service's performance.
+The [previous article](/article/crash-and-timeout-simulation) prevents the crash/OOM by adding a timeout.
+But a timeout only limits *how long* you wait per request, it doesn't stop you from waiting at all.
+
+If the partner has an outage for 20 minutes, do we actually need to keep sending requests to them?
+Every request still needs its full 3 seconds before it times out.
+It's true that the timeout prevents our service from an OOM crash, but do we need to keep the 3-second wait for each request when we already know it's broken?
+
+## Solution
+
+Once you've had a handful of failures in a row, there's no reason to keep requesting.
+That's the idea behind a circuit breaker: stop sending requests to a partner that's already failing, and fail immediately instead of waiting to find out again.
+
+A circuit breaker has three states:
+- **Closed** — normal operation, meaning the service allows connections through normally.
+- **Open** — once failures exceed the threshold, meaning the service no longer allows connections and returns an error immediately without touching the partner.
+- **Half-Open** — after a cooldown, the breaker lets a small number of test requests through. If they succeed, it closes again. If they fail, it stays open.
+
+<PlantUML code={`
+@startuml
+participant Service
+participant "Circuit Breaker" as CB
+participant Partner
+
+note over CB
+state: closed
+connection success
+end note
+Service -> CB: request to partner\\nthrough circuit breaker
+activate CB
+CB -> Partner
+Partner --> CB
+CB --> Service
+deactivate CB
+
+note over CB
+state: **open**
+connection failed, exceeded the threshold
+end note
+Service -> CB
+activate CB
+CB --> Service: too many request errors\\ncircuit stops the connection\\nand returns the error immediately
+deactivate CB
+
+note over CB
+state: **half-open**
+allow connection with a limited number
+if the connection is still bad, set state to open
+if the connection recovers, set state to closed
+end note
+Service -> CB
+activate CB
+CB -> Partner
+Partner -->x CB: response error
+CB -> CB: set state to open
+CB --> Service
+deactivate CB
+@enduml
+`} />
+
+Same setup as the previous article's Case 3 — a 3-second timeout. Every caller experiences a flat 3-second latency spike for the entire outage.
+
+<LineChart
+	data={[
+		{ x: 0, y: 0 },
+		{ x: 3, y: 3 },
+		{ x: 20, y: 3 },
+	]}
+	xLabel="time (s)"
+	yLabel="latency (s)"
+/>
+
+With the circuit breaker, the chart looks more like this:
+
+<LineChart
+	data={[
+		{ x: 0, y: 0 },
+		{ x: 3, y: 3 },
+		{ x: 3, y: 0.01 },
+		{ x: 20, y: 0.01 },
+	]}
+	xLabel="time (s)"
+	yLabel="latency (s)"
+/>
+
+There's no more 3-second wait once the breaker has had enough failures to trip. Requests fail instantly, removing the unnecessary wait for an external call that we already know is broken.
+
+```go
+var breaker = gobreaker.NewCircuitBreaker(gobreaker.Settings{
+	Name:    "partner-service",
+	Timeout: 30 * time.Second, // how long it stays open before probing again
+	ReadyToTrip: func(counts gobreaker.Counts) bool {
+		return counts.ConsecutiveFailures > 5
+	},
+})
+
+func fetchFromPartner(ctx context.Context) (*Response, error) {
+	result, err := breaker.Execute(func() (interface{}, error) {
+		return fetchFromPartnerWithTimeout(ctx)
+	})
+	if err != nil {
+		return nil, err // fails instantly once the breaker is open
+	}
+	return result.(*Response), nil
+}
+```
+
+After the 30 second `Timeout` window, the breaker moves to half-open and lets one request through to check if the partner recovered.
+If it succeeds, the breaker closes and traffic resumes normally. If it fails, the breaker opens again and waits another 30 seconds.
+
+## Summary
+
+The timeout bounds how long a single request can wait. The circuit breaker bounds how many requests you send to a partner that's already failing.
+Once it's open, you stop paying the timeout cost on every call, and stop sending requests to an external service that is broken.
+
+The two work together: timeout limits the damage of any one request, and the breaker stops the damage from adding up once the partner is actually down.

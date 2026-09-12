@@ -1,0 +1,14 @@
+---
+import plantumlEncoder from 'plantuml-encoder';
+
+interface Props {
+	code: string;
+}
+
+const { code } = Astro.props;
+const encoded = plantumlEncoder.encode(code.trim());
+const res = await fetch(`https://www.plantuml.com/plantuml/svg/${encoded}`);
+const svg = await res.text();
+---
+
+<div class="plantuml" set:html={svg} />

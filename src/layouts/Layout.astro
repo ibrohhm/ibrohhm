@@ -161,6 +161,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		margin-bottom: 0.5rem;
 	}
 
+	.formula {
+		text-align: center;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 2rem 0;
+    background-color: var(--color-surface);
+    padding: 4px;
+	}
+
 	.article code {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
@@ -175,6 +184,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		overflow-x: auto;
 		margin: 0 0 1.25rem;
 		line-height: 1.4;
+		tab-size: 2;
 	}
 
 	.article pre code {

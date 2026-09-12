@@ -1,0 +1,129 @@
+---
+interface Props {
+	data: { x: number; y: number }[];
+	xLabel?: string;
+	yLabel?: string;
+	threshold?: { value: number; label: string };
+	crashed?: boolean;
+}
+
+const { data, xLabel = '', yLabel = '', threshold, crashed = false } = Astro.props;
+
+const width = 480;
+const height = 220;
+const padding = { top: 16, right: 16, bottom: 36, left: 48 };
+const plotWidth = width - padding.left - padding.right;
+const plotHeight = height - padding.top - padding.bottom;
+
+const maxX = Math.max(...data.map((d) => d.x));
+const rawMaxY = Math.max(...data.map((d) => d.y), threshold?.value ?? 0);
+
+function niceNumber(x: number) {
+	if (x <= 0) return 1;
+	const exp = Math.floor(Math.log10(x));
+	const fraction = x / 10 ** exp;
+	const niceFraction = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+	return niceFraction * 10 ** exp;
+}
+
+const yTickTarget = 4;
+const step = niceNumber(rawMaxY / yTickTarget || 1);
+let tickCount = Math.ceil(rawMaxY / step);
+if (tickCount * step <= rawMaxY) tickCount += 1;
+const maxY = tickCount * step;
+const yDecimals = Math.max(0, -Math.floor(Math.log10(step)));
+const formatTick = (v: number) => Number(v.toFixed(yDecimals)).toString();
+
+const toX = (x: number) => padding.left + (x / maxX) * plotWidth;
+const toY = (y: number) => padding.top + plotHeight - (y / maxY) * plotHeight;
+
+const points = data.map((d) => `${toX(d.x)},${toY(d.y)}`).join(' ');
+
+const yTickValues = Array.from({ length: tickCount + 1 }, (_, i) => i * step);
+
+const xTickValues = [...new Set(data.map((d) => d.x))].sort((a, b) => a - b);
+const baselineY = padding.top + plotHeight;
+---
+
+<svg {width} {height} viewBox={`0 0 ${width} ${height}`}>
+	{
+		yTickValues.map((v) => (
+			<g>
+				<line
+					x1={padding.left}
+					x2={width - padding.right}
+					y1={toY(v)}
+					y2={toY(v)}
+					stroke="var(--color-surface)"
+					stroke-width="1"
+				/>
+				<text x={padding.left - 8} y={toY(v)} text-anchor="end" dominant-baseline="middle" font-size="11">
+					{formatTick(v)}
+				</text>
+			</g>
+		))
+	}
+	{
+		xTickValues.map((v) => (
+			<g>
+				<line x1={toX(v)} x2={toX(v)} y1={baselineY} y2={baselineY + 4} stroke="var(--color-muted)" stroke-width="1" />
+				<text x={toX(v)} y={baselineY + 16} text-anchor="middle" font-size="11" fill="var(--color-muted)">
+					{v}
+				</text>
+			</g>
+		))
+	}
+	{
+		threshold && (
+			<g>
+				<line
+					x1={padding.left}
+					x2={width - padding.right}
+					y1={toY(threshold.value)}
+					y2={toY(threshold.value)}
+					stroke="var(--color-amber)"
+					stroke-width="1.5"
+					stroke-dasharray="4 3"
+				/>
+				<text x={width - padding.right} y={toY(threshold.value) - 6} text-anchor="end" font-size="11" fill="var(--color-amber)">
+					{threshold.label}
+				</text>
+			</g>
+		)
+	}
+	<polyline points={points} fill="none" stroke="var(--color-plum)" stroke-width="2" />
+	{
+		data.map((d, i) => {
+			const isLast = i === data.length - 1;
+			const isCrashPoint = crashed && isLast;
+			return (
+				<circle
+					cx={toX(d.x)}
+					cy={toY(d.y)}
+					r={isCrashPoint ? 5 : 3}
+					fill={isCrashPoint ? 'var(--color-amber)' : 'var(--color-plum)'}
+				/>
+			);
+		})
+	}
+	{
+		crashed && (
+			<text
+				x={toX(data[data.length - 1].x)}
+				y={toY(data[data.length - 1].y) - 12}
+				text-anchor="end"
+				font-size="11"
+				font-weight="500"
+				fill="var(--color-amber)"
+			>
+				crash
+			</text>
+		)
+	}
+	<text x={width / 2} y={height - 4} text-anchor="middle" font-size="11">
+		{xLabel}
+	</text>
+	<text x={14} y={height / 2} text-anchor="middle" font-size="11" transform={`rotate(-90 14 ${height / 2})`}>
+		{yLabel}
+	</text>
+</svg>

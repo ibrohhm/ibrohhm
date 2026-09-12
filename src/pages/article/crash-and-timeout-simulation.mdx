@@ -1,0 +1,125 @@
+---
+layout: ../../layouts/Layout.astro
+title: Crash and Timeout Simulation
+description: How external service delays can destabilize your application, demonstrated with a client-server-partner Go simulation, and why request timeouts prevent it.
+article: true
+---
+
+import LineChart from '../../components/LineChart.astro';
+
+# Crash and Timeout Simulation
+
+Your team handles a service that has integration with external services, the service you cannot control.
+How do you make your service reliable regardless of what happens to the external service's performance?
+How do you handle peak hours while the external service is having performance issues?
+
+Your job as the maintainer isn't just shipping the code, but also preventing the chaos caused by that external service.
+
+## Simulation
+
+Each request to that external service holds a small chunk of your service's memory until the request finishes.
+If requests pile up because the external service is slow, that memory stays locked up.
+
+More pending requests means more memory tied up. The number of pending requests depends on two things: **how fast requests come in**, and **how long each request takes**.
+
+<div class="formula">pending requests = request rate x request duration</div>
+
+Each request takes approximately 50 KB of memory, so 100 pending requests would take ~5 MB.
+
+It's time for the simulation.
+
+### Case 1: 100 rps with latency 200 millisecond
+
+Your service integrates with a reliable external service — the max latency for a single request is only 200 milliseconds.
+
+At 100 rps with 200ms latency, pending requests stay steady at 100 × 0.2 = 20 — so memory ramps up fast, then flattens at ~20 × 50 KB = 1 MB and holds there. **No growth, no crash**.
+
+<LineChart
+	data={[
+		{ x: 0, y: 0 },
+		{ x: 0.2, y: 1 },
+		{ x: 0.6, y: 1 },
+		{ x: 1, y: 1 },
+		{ x: 2, y: 1 },
+	]}
+	xLabel="time (s)"
+	yLabel="memory (MB)"
+/>
+
+### Case 2: 100 rps with latency 20 second
+
+Something unexpectedly happens, the external service degrades badly, latency stretches to 20s.
+
+Pending requests are 100 × 20 = 2000, and at 50 KB memory for each request that's ~100 MB — exactly your service's memory limit.
+**It never gets a chance to settle there**, the memory climbs straight into the ceiling, and the process gets **OOM killed** — once memory goes over the limit, the kernel kills the process right away, with no chance to shut down cleanly first.
+
+<LineChart
+	data={[
+		{ x: 0, y: 0 },
+		{ x: 5, y: 60 },
+		{ x: 10, y: 85 },
+		{ x: 15, y: 97 },
+		{ x: 20, y: 100 },
+	]}
+	xLabel="time (s)"
+	yLabel="memory (MB)"
+	threshold={{ value: 100, label: 'memory limit' }}
+/>
+
+Every pending request holds its memory until the external service finally responds. A 20 second hang at 100 rps is enough on its own, no traffic spike required.
+
+The simple way to solve the problem is by adding the timeout for each external request.
+
+### Case 3: 100 rps with latency 20 second, with a 3 second timeout
+
+Same broken external service, same 20 second latency, same 100 rps, the only change is adding the timeout threshold 3s.
+
+The service will cut off any inflight request that takes longer than the threshold.
+The maximum latency will be 3s no matter how slow the external service actually is.
+Resulting pending = 100 × 3 = 300, or ~15 MB — nowhere near the 100 MB limit, regardless of how long the outage drags on.
+
+<LineChart
+	data={[
+		{ x: 0, y: 0 },
+		{ x: 1.5, y: 12 },
+		{ x: 3, y: 15 },
+		{ x: 6, y: 15 },
+		{ x: 9, y: 15 },
+	]}
+	xLabel="time (s)"
+	yLabel="memory (MB)"
+	threshold={{ value: 100, label: 'memory limit' }}
+/>
+
+The requests still fail, you'll get a timeout error instead of a response, but the service itself keeps running, which means every *other* request still gets served.
+
+example code in golang:
+
+```go
+...
+ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+defer cancel()
+
+req, err := http.NewRequestWithContext(ctx, http.MethodGet, partnerURL, nil)
+if err != nil {
+	return nil, err
+}
+
+resp, err := http.DefaultClient.Do(req)
+if err != nil {
+	// ctx deadline exceeded after 3s: err wraps context.DeadlineExceeded
+	return nil, err
+}
+defer resp.Body.Close()
+...
+```
+
+## Summary
+
+The external service's behavior was never something you could control. What you can control is how you handle that request.
+A simple timeout saves your service from crashing and prevents the cascading error for other internal services that call your service.
+But this is just a simulation, the request rate may vary in real cases, and there may be many external services you need to handle.
+
+Another solution that can control the request is a rate limiter that shrinks the request rate,
+or a circuit breaker that can automatically stop sending requests once the external service is failing.
+A resilient integration usually leans on all three together, not just one.

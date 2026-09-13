@@ -1,0 +1,112 @@
+---
+layout: ../../layouts/Layout.astro
+title: Building an Autonomous Agent Team That Replicates My Engineering Workflow
+description: ""
+article: true
+---
+
+import PlantUML from '../../components/PlantUML.astro';
+
+# Building an Autonomous Agent Team That Replicates My Engineering Workflow
+
+I've been working closely with agentic AI, and after a lot of iteration, I built a small agent team that can replicate the way I actually work — from reading a task to pushing a reviewable branch.
+
+In this post, will walk through the four specialized agents and one skill that orchestrates them end to end
+
+<img src="/images/agent-team-pipeline.webp" alt="Autonomous ship pipeline: Planner, Implementer, Reviewer, Tester, with a retry loop between Implementer and Reviewer" />
+
+## The Mental Model
+
+When I pick up a task, my workflow looks like this:
+
+<PlantUML code={`
+@startuml
+left to right direction
+
+rectangle "Plan" as plan
+rectangle "Implement" as implement
+rectangle "Self Review" as review
+rectangle "Test" as test
+
+plan ..> implement
+implement ..> review
+review ..> test
+@enduml
+`} />
+
+the agent team mirrors this exactly:
+
+```
+/ship <task or Jira key>
+      └─ clarifier     — is the task specific enough?
+      └─ planner       — explore codebase, write implementation plan
+      └─ implementer   — execute plan task-by-task, commit each chunk
+      └─ reviewer      — diff the branch, find blockers and nits
+      └─ tester        — go vet, go test -race, golangci-lint
+```
+
+## Planner
+
+Before writing the code, we explore the codebase: find what already exists, check the dependencies, spot the blockers. The planner agent does the same:
+
+<img src="/images/planner-agent-flow.png" alt="Planner agent flow: explore codebase, write plan, output plan written / ambiguous / fail" />
+
+Planner reads a task description or Jira key, explores the codebase, then outputs a detailed implementation plan — file paths to create/modify, checkbox steps, and exact code changes. Detailed plans eliminate guessing by next subagents
+
+## Implementer
+
+The Implementer agent will reads the plan, create a new branch, executes every task in order, commits each chunk before moving to the next. Two modes:
+
+**Normal mode** — follows the plan step by step. Stops immediately on test failure or build error. Never guesses.
+
+**Blocker-fix mode** — activated when REVIEW_BLOCKERS is passed. Ignores the original plan. Fixes only the listed issues, re-runs tests, commits with fix(review): resolve review blockers.
+
+This dual mode is what makes the review-retry loop work:
+
+<img src="/images/implementer-agent-flow.png" alt="Implementer agent flow: mode branches into normal process or blocker fix, then runs checks after each step and commits" />
+
+## Reviewer
+
+The Reviewer agent will compare the branch against the default base and classifies every finding:
+
+**Blocker** — correctness bugs, security issues, data loss risk, nil dereference, breaking API contract. <br />
+**Nit** — naming inconsistency, redundant code, observability gaps, pattern deviation. <br />
+**Signal bar** - findings below ~80% confidence are dropped. it reduce unnecessary review
+
+Move back all the bug findings to the Implementer agent:
+
+<img src="/images/reviewer-agent-flow.png" alt="Reviewer agent flow: get diff, read context, classify findings, then either back to Implementer on blocker or end on pass" />
+
+## Tester
+
+The last one is tester agent. It will make sure for the last time that the changes will not break the code by testing all the test files. Since my works is very closely with the Golang, this tester agent only focus on the Golang language:
+
+<img src="/images/tester-agent-flow.png" alt="Tester agent flow: detect repo, run go vet and go test, run golangci-lint if configured, report pass or fail" />
+
+## Ship Skills
+
+All those agents will not run by their own, we still need skill to orchestrate those agent into workflow
+
+```
+/ship <task or Jira key>
+
+Pipeline:
+
+0. Clarifier → CLEAR or ask user one question
+1. Create branch
+2. Planner → PLAN_WRITTEN
+3. Implementer (initial)
+4. Review-retry loop (max 2 attempts)
+   └─ BLOCKED → implementer fixes blockers → reviewer retries
+5. Tester
+6. Success summary
+```
+
+## Summary
+
+Four agents, one job each: Planner explores and writes the plan, Implementer executes it and commits, Reviewer diffs the branch and classifies findings, Tester runs the checks. The `/ship` skill wires them into one pipeline, routing between steps on structured tokens instead of parsing prose, with a capped retry loop so a stuck Reviewer/Implementer cycle can't run forever.
+
+None of this replaces engineering judgment — the plan still needs to be right, the review still needs a real diff to reason about, and a human still reviews the branch before it merges. What it replaces is the manual repetition of a loop I was already running by hand, every time.
+
+> If you've ever caught yourself doing the same "explore → plan → implement → review → test" loop for the tenth time,
+> you don't have to. The loop is automatable. You just have to write it down

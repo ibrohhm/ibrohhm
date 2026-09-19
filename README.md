@@ -1,46 +1,19 @@
-# Astro Starter Kit: Basics
+# Syarif Ibrohim
 
-```sh
-npm create astro@latest -- --template basics
-```
+Backend Engineer. Portfolio and technical writing, live at [syarifibrohim.me](https://syarifibrohim.me).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Links
 
-## 🚀 Project Structure
+- GitHub: [github.com/ibrohhm](https://github.com/ibrohhm)
+- LinkedIn: [linkedin.com/in/syarif-ibrohim](https://www.linkedin.com/in/syarif-ibrohim-00434510a)
+- dev.to: [dev.to/ibrohhm](https://dev.to/ibrohhm)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Articles
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+Technical writing on backend engineering, resilience patterns, and observability — see [/articles](https://syarifibrohim.me/articles).
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Building an Autonomous Agent Team That Replicates My Engineering Workflow](https://syarifibrohim.me/article/building-an-autonomous-agent-team)
+- [The Dangers of High-Cardinality Labels in Prometheus](https://syarifibrohim.me/article/high-cardinality-labels-in-prometheus)
+- [Circuit Breaker Pattern](https://syarifibrohim.me/article/circuit-breaker-pattern)
+- [Crash and Timeout Simulation](https://syarifibrohim.me/article/crash-and-timeout-simulation)
+- [Know Better About N+1 Queries Problem](https://syarifibrohim.me/article/know-better-about-n1-queries-problem)

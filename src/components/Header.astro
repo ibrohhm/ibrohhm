@@ -1,0 +1,63 @@
+---
+const navLinks = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Articles', href: '/articles' },
+];
+
+const socialLinks = [
+	{ label: 'GitHub', href: 'https://github.com/ibrohhm' },
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/syarif-ibrohim-00434510a' },
+	{ label: 'dev.to', href: 'https://dev.to/ibrohhm' },
+];
+---
+
+<header class="site-header">
+	<nav class="nav-left">
+		{
+			navLinks.map((link) => (
+				<a href={link.href}>{link.label}</a>
+			))
+		}
+	</nav>
+	<nav class="nav-right">
+		{
+			socialLinks.map((link) => (
+				<a href={link.href} target="_blank" rel="noopener noreferrer">
+					{link.label}
+				</a>
+			))
+		}
+	</nav>
+</header>
+
+<style>
+	.site-header {
+		position: fixed;
+		top: 0;
+		z-index: 1000;
+		width: 100%;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1.5rem 2rem;
+	}
+
+	.nav-left,
+	.nav-right {
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	.site-header a {
+		font-family: var(--font-body);
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--color-muted);
+		text-decoration: none;
+	}
+
+	.site-header a:hover {
+		color: var(--color-plum);
+	}
+</style>

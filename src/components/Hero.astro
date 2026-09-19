@@ -1,111 +1,30 @@
----
-const links = [
-	{ label: 'GitHub', href: 'https://github.com/ibrohhm' },
-	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/syarif-ibrohim-00434510a' },
-	{ label: 'dev.to', href: 'https://dev.to/ibrohhm' },
-];
----
-
 <div class="hero">
-	<p class="eyebrow">Syarif Ibrohim</p>
-	<h1>Software Engineer</h1>
-	{/* TODO: replace with your real one-line bio */}
-	<p class="bio">Building software, one system at a time.</p>
-
-	<nav class="links">
-		{
-			links.map((link) => (
-				<a href={link.href} target="_blank" rel="noopener noreferrer">
-					{link.label}
-				</a>
-			))
-		}
-	</nav>
-
-	<a class="article-link" href="/article/know-better-about-n1-queries-problem">
-		Read the latest article &rarr;
-	</a>
+	<h1 id="syarif-ibrohim">Syarif Ibrohim</h1>
+	<div id="role">Backend Engineer</div>
 </div>
 
 <style>
 	.hero {
+		width: 100%;
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		max-width: 640px;
-		margin: 0 auto;
-		padding: 2rem;
+		align-items: center;
+		text-align: center;
+		box-sizing: border-box;
 	}
 
-	.eyebrow {
-		font-family: var(--font-body);
-		font-size: 0.875rem;
-		font-weight: 500;
-		letter-spacing: 0.01em;
-		color: var(--color-muted);
+	#syarif-ibrohim {
 		margin: 0 0 0.5rem;
+		letter-spacing: 0.2em;
 	}
 
-	h1 {
-		font-family: var(--font-display);
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
-		font-weight: 400;
-		line-height: 1.1;
-		letter-spacing: -0.02em;
-		color: var(--color-plum);
-		margin: 0 0 1.25rem;
-		text-wrap: balance;
-	}
-
-	.bio {
+	#role {
 		font-family: var(--font-body);
-		font-size: 1.125rem;
-		line-height: 1.6;
-		color: var(--color-ink);
-		margin: 0 0 2rem;
-		max-width: 50ch;
-	}
-
-	.links {
-		display: flex;
-		gap: 1.5rem;
-		margin-bottom: 2.5rem;
-	}
-
-	.links a {
-		font-family: var(--font-body);
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--color-plum);
-		text-decoration: none;
-	}
-
-	.links a:hover {
-		text-decoration: underline;
-		text-decoration-color: var(--color-amber);
-	}
-
-	.article-link {
-		font-family: var(--font-body);
-		font-size: 1rem;
-		font-weight: 500;
-		color: var(--color-ink);
-		text-decoration: none;
-		width: fit-content;
-		border-bottom: 1px solid var(--color-ink);
-		padding-bottom: 0.2rem;
-		transition: color 0.2s, border-color 0.2s;
-	}
-
-	.article-link:hover {
-		color: var(--color-plum);
-		border-color: var(--color-plum);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.article-link {
-			transition: none;
-		}
+		font-size: 1.25rem;
+		color: var(--color-muted);
+		margin: 0;
+		letter-spacing: 0.2em;
 	}
 </style>

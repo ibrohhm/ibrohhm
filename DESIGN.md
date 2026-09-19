@@ -3,19 +3,25 @@ name: syarifibrohim.me
 description: Personal engineering portfolio and technical writing site
 colors:
   plum: "oklch(0.38 0.15 315)"
-  plum-deep: "oklch(0.28 0.13 315)"
   amber: "oklch(0.52 0.14 70)"
-  bg: "oklch(1.000 0.000 0)"
+  bg: "oklch(0.98 0 0)"
   surface: "oklch(0.96 0.005 315)"
   ink: "oklch(0.18 0.02 315)"
   muted: "oklch(0.48 0.01 315)"
 typography:
-  display:
-    fontFamily: "'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace"
+  h1:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: "clamp(2.25rem, 5vw, 3.5rem)"
-    fontWeight: 400
+    fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "-0.02em"
+  h2:
+    fontSize: "2rem"
+    fontWeight: 600
+    lineHeight: 1.3
+  h3:
+    fontSize: "1.4rem"
+    fontWeight: 600
   body:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: "1.125rem"
@@ -37,13 +43,10 @@ spacing:
   md: "1.5rem"
   lg: "3rem"
 components:
-  button-primary:
-    backgroundColor: "{colors.plum}"
-    textColor: "{colors.bg}"
-    rounded: "{rounded.sm}"
-    padding: "0.75rem 1.5rem"
-  button-primary-hover:
-    backgroundColor: "{colors.plum-deep}"
+  card:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.md}"
+    padding: "1.5rem"
   link:
     textColor: "{colors.plum}"
 ---
@@ -57,7 +60,7 @@ components:
 A software engineer's own notebook, not a corporate resume template. The page should read like something a person actually wrote and cares about: warm, direct, a little idiosyncratic, still credible enough that a recruiter skimming for thirty seconds walks away with a clear, positive read. It explicitly rejects the SaaS-portfolio look: no gradient-text hero, no icon-grid "skills" cards, no pastel-lavender-on-white AI-generic palette. Warmth here comes from a deep plum primary and a warm amber accent doing real work against a plain white page, not from a tinted "cozy" background.
 
 **Key Characteristics:**
-- Terminal-personal, not editorial: a monospace display font carries the "engineer's own notebook" identity literally, body stays a clean readable sans
+- Restrained, not editorial: system sans throughout with weight contrast for hierarchy (headings at 600, body at 400) — no display typeface carrying personality, the writing does that instead
 - One confident brand color (plum) used deliberately, not sprinkled as decoration
 - Content-first: articles are the proof of expertise, so their typography gets the same care as the homepage
 
@@ -83,21 +86,21 @@ Restrained-but-committed: a single deep plum carries identity across both pages;
 
 ## 3. Typography
 
-**Display Font:** Fragment Mono (with SF Mono, Menlo, Consolas fallback)
+**Heading Font:** -apple-system / system sans stack (same family as body, weight 600 for contrast)
 **Body Font:** -apple-system / system sans stack
-**Label/Mono Font:** Fragment Mono — same family as display, doing double duty for code
+**Mono Font:** Fragment Mono (with SF Mono, Menlo, Consolas fallback) — code blocks only
 
-**Character:** Fragment Mono's terminal-shaped letterforms carry the "engineer's own notebook" identity literally — headlines look like something typed in an editor, not a magazine. The system sans stays invisible and fast for actual reading. (Originally speced with Fraunces; swapped after both the deterministic detector and the font-selection procedure flagged it as the #1 reflex-reject default — "warm" was translating into the exact overused editorial-serif trope the brief wanted to avoid.)
+**Character:** No display typeface carries the site's identity — headings are the same system sans as body, distinguished by size and weight (600 vs 400), not a font swap. Fragment Mono is reserved for code, where its terminal shape earns its place functionally instead of decoratively. (This project tried two display treatments before landing here: Fraunces first, flagged as the #1 reflex-reject editorial-serif default; then Fragment Mono as a "terminal-personal" identity font. Both were dropped in favor of plain weight-contrast hierarchy — simpler, and the writing carries the personality instead of the typeface.)
 
 ### Hierarchy
-- **Display** (400, clamp(2.25rem, 5vw, 3.5rem), 1.1): Page/article H1 only. Fragment Mono only ships weight 400 — hierarchy comes from size + color + family-shift, not weight.
-- **Headline** (400, 1.5rem, 1.3): Section headings (H2) within articles and homepage sections.
-- **Title** (400, 1.25rem, 1.3): H3, minor section breaks.
+- **H1** (600, clamp(2.25rem, 5vw, 3.5rem), 1.1): Page/article title only.
+- **H2** (600, 2rem, 1.3): Section headings.
+- **H3** (600, 1.4rem): Minor section breaks. Sized at ≥1.25× body (1.125rem) to keep real scale contrast — don't let this drift back toward body size.
 - **Body** (400, 1.125rem, 1.7): Article prose, capped at ~70ch line length.
-- **Label** (500, 0.875rem, letter-spacing 0.01em): Nav links, metadata, button text — system sans, which does have a real 500 weight.
+- **Label** (500, 0.875rem, letter-spacing 0.01em): Nav links, metadata, card captions.
 
 ### Named Rules
-**The Two-Voice Rule.** Only Fragment Mono (display + code) and the system sans (body + labels) appear on the page. No third typeface, no decorative script.
+**The One-Family Rule.** Only the system sans (headings + body + labels) and Fragment Mono (code only) appear on the page. Hierarchy comes from size and weight, not a second display typeface.
 
 ## 4. Elevation
 
@@ -105,19 +108,21 @@ Flat by default. No drop shadows. Depth comes from the surface/paper contrast (s
 
 ## 5. Components
 
-### Buttons
-- **Shape:** 4px radius (sm) — barely rounded, not pill-shaped.
-- **Primary:** Plum background, white text, 0.75rem 1.5rem padding.
-- **Hover:** Background shifts to Plum Deep, no shadow or transform.
-
 ### Links
 - **Style:** Plum text color, underline on hover only (not persistent), amber underline color on hover for a small warm accent.
 
-### Cards / Containers
-- **Corner Style:** 8px radius (md) where containers are used at all — used sparingly, this is not a card-grid site.
-- **Background:** Surface tone against Paper background.
-- **Shadow Strategy:** None (see Elevation).
-- **Border:** None; separation via background tone difference only.
+### Article Cards (homepage index)
+- **Shape:** 8px radius (md), Surface background against Paper page background.
+- **Content:** Title (H3) + one-line description, whole card is the link.
+- **Hover:** Background shifts slightly toward plum (`color-mix`), no shadow, no transform.
+- **Shadow Strategy:** None (see Elevation). One-column stacked list, not a grid — this isn't a card-grid site, cards here are a plain content index.
+
+### Blockquote
+- **Style:** Italic, muted ink color, no border, no background tint. A quiet aside, not a callout box.
+
+### Diagrams (PlantUML) & Formula
+- **PlantUML:** Rendered server-side at build time (via `plantuml-encoder` + a public render endpoint), inlined as static SVG — no client-side dependency. Centered, no border/shadow.
+- **Formula:** Centered, larger type (1.5rem), Surface background, used sparingly for a single equation-like statement (e.g. `pending requests = rate × duration`) — not for general emphasis.
 
 ### Navigation
 - Minimal: name/wordmark links home, plum active-state underline. No hamburger, no dropdown — the site is two page types (home, article).
@@ -125,13 +130,15 @@ Flat by default. No drop shadows. Depth comes from the surface/paper contrast (s
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** use Fragment Mono only for display/headline/code roles — never long-form body text (monospace hurts prose readability at paragraph length).
-- **Do** keep the background pure white (oklch(1 0 0)); let plum and amber carry warmth.
+- **Do** keep headings in the system sans with weight 600 for contrast against body's 400 — no second display typeface.
+- **Do** keep Fragment Mono scoped to code blocks only.
+- **Do** keep the background near-white (oklch(0.98 0 0)); let plum and amber carry warmth.
 - **Do** cap article body width at `min(90%, 70ch)` for readability at every viewport, phones included.
+- **Do** keep h3 at least 1.25× the body font size (currently 1.4rem vs 1.125rem) — a flatter ratio reads as no hierarchy at all.
 
 ### Don't:
 - **Don't** use gradient text or gradient button fills (the default Astro starter's `linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%)` button was explicitly replaced by this redesign).
 - **Don't** add icon-grid "skills" cards or generic SaaS hero layouts — named anti-reference from PRODUCT.md.
-- **Don't** tint the page background toward cream/beige "for warmth" — warmth comes from plum + amber + type choice, not the surface.
+- **Don't** tint the page background toward cream/beige "for warmth" — warmth comes from plum + amber + copy, not the surface.
 - **Don't** use pastel lavender-on-white; plum must stay deep/saturated enough to read as deliberate, not decorative.
-- **Don't** reach for Fraunces/Newsreader/Lora/Playfair/Cormorant/Instrument Serif or any editorial display serif "for warmth" — that's the reflex-reject list, already tried and reverted once on this project.
+- **Don't** reach for Fraunces/Newsreader/Lora/Playfair/Cormorant/Instrument Serif, or reintroduce a mono/display typeface for headings "for personality" — tried twice on this project, dropped both times in favor of plain weight contrast.

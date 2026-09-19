@@ -1,4 +1,6 @@
 ---
+import Header from '../components/Header.astro';
+
 interface Props {
 	title?: string;
 	description?: string;
@@ -40,12 +42,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		/>
 	</head>
 	<body>
+		<Header />
 		{
 			isArticle ? (
 				<div class="article">
-					<a class="back-link" href="/">
-						&larr; Syarif Ibrohim
-					</a>
 					<slot />
 				</div>
 			) : (
@@ -58,9 +58,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 <style is:global>
 	:root {
 		--color-plum: oklch(0.38 0.15 315);
-		--color-plum-deep: oklch(0.28 0.13 315);
 		--color-amber: oklch(0.52 0.14 70);
-		--color-bg: oklch(1 0 0);
+		--color-bg: oklch(0.98 0 0);
 		--color-surface: oklch(0.96 0.005 315);
 		--color-ink: oklch(0.18 0.02 315);
 		--color-muted: oklch(0.48 0.01 315);
@@ -76,8 +75,31 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		margin: 0;
 		width: 100%;
 		height: 100%;
-		background: oklch(0.98 0 0);
 		color: var(--color-ink);
+	}
+
+	body {
+		background-color: var(--color-bg);
+		position: relative;
+	}
+
+	body::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		background-image:
+			linear-gradient(to right, oklch(0.9 0.005 315) 1px, transparent 1px),
+			linear-gradient(to bottom, oklch(0.9 0.005 315) 1px, transparent 1px);
+		background-size: 24px 24px;
+		mask-image: linear-gradient(to right, black 0%, transparent 25%, transparent 75%, black 100%);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			black 0%,
+			transparent 25%,
+			transparent 75%,
+			black 100%
+		);
 	}
 
 	a:focus-visible,
@@ -97,68 +119,54 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		color: var(--color-ink);
 	}
 
-	.article a {
+	a {
 		color: var(--color-plum);
 	}
 
-	.article a:hover {
+	a:hover {
 		text-decoration-color: var(--color-amber);
 	}
 
-	.back-link {
-		display: inline-block;
-		font-family: var(--font-body);
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--color-muted);
-		text-decoration: none;
-		margin-bottom: 2rem;
-	}
-
-	.back-link:hover {
-		color: var(--color-plum);
-	}
-
-	.article h1,
-	.article h2,
-	.article h3 {
+	h1,
+	h2,
+	h3 {
 		font-family: var(--font-body);
 		font-weight: 600;
 		text-wrap: balance;
 	}
 
-	.article h1 {
+	h1 {
 		font-size: clamp(2.25rem, 5vw, 3.5rem);
 		line-height: 1.1;
 		letter-spacing: -0.02em;
 		margin: 0 0 1.5rem;
 	}
 
-	.article h2 {
+	h2 {
 		font-size: 2rem;
 		line-height: 1.3;
 		margin: 2.5rem 0 1rem;
 	}
 
-	.article h3 {
-		font-size: 1.25rem;
+	h3 {
+		font-size: 1.4rem;
 		margin: 2rem 0 0.75rem;
 	}
 
-	.article p {
+	p {
 		margin: 0 0 1.25rem;
 		text-wrap: pretty;
 	}
 
-	.article blockquote {
+	blockquote {
 		margin: 0 0 1.25rem;
 		padding: 0;
 		font-style: italic;
 		color: var(--color-muted);
 	}
 
-	.article ul,
-	.article ol {
+	ul,
+	ol {
 		margin: 0 0 1.25rem;
 		padding-left: 1.5rem;
 	}
@@ -177,7 +185,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
     padding: 4px;
 	}
 
-	.article code {
+	code {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
 		background: var(--color-surface);
@@ -185,7 +193,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		border-radius: 4px;
 	}
 
-	.article pre {
+	pre {
 		padding: 0.75rem 1.25rem;
 		border-radius: 8px;
 		overflow-x: auto;
@@ -194,14 +202,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		tab-size: 2;
 	}
 
-	.article pre code {
+	pre code {
 		background: none;
 		padding: 0;
 		font-size: 0.875rem;
 	}
 
-	.article img,
-	.article svg {
+	img,
+	svg {
 		display: block;
 		max-width: 100%;
 		margin: 0 auto 1.25rem;

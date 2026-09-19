@@ -1,0 +1,65 @@
+---
+const modules = import.meta.glob('../pages/article/*.mdx', { eager: true }) as Record<
+	string,
+	{ frontmatter: { title: string; description: string } }
+>;
+
+const sorted = Object.entries(modules)
+	.map(([path, mod]) => {
+		const slug = path.split('/').pop()!.replace(/\.mdx$/, '');
+		return {
+			title: mod.frontmatter.title,
+			description: mod.frontmatter.description,
+			url: `/article/${slug}`,
+		};
+	})
+	.sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<section class="articles" id="articles">
+	{
+		sorted.map((article) => (
+			<a class="card" href={article.url}>
+				<h3>{article.title}</h3>
+				<p>{article.description}</p>
+			</a>
+		))
+	}
+</section>
+
+<style>
+	.articles {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding-bottom: 2rem;
+	}
+
+	.card {
+		display: block;
+		background: var(--color-surface);
+		padding: 1.5rem;
+		border-radius: 8px;
+		text-decoration: none;
+		transition: background 0.2s;
+	}
+
+	.card:hover {
+		background: color-mix(in oklch, var(--color-surface), var(--color-plum) 6%);
+	}
+
+	.card h3 {
+		margin: 0 0 0.5rem;
+	}
+
+	.card p {
+		font-size: 1rem;
+		margin: 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.card {
+			transition: none;
+		}
+	}
+</style>

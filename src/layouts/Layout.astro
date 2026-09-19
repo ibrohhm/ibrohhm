@@ -22,8 +22,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={pageDescription} />
@@ -42,7 +40,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 			rel="stylesheet"
 		/>
 	</head>
-	<body>
+	<body class={isArticle ? 'bg-grid bg-grid-fade' : 'bg-grid'}>
 		<Header />
 		{
 			isArticle ? (
@@ -70,7 +68,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		--color-bg: oklch(0.98 0 0);
 		--color-surface: oklch(0.96 0.005 315);
 		--color-card: oklch(0.99 0 0);
-		--color-ink: oklch(0.18 0.02 315);
+		--color-ink: rgb(89, 89, 89);
 		--color-muted: oklch(0.48 0.01 315);
 
 		--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
@@ -89,18 +87,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 
 	body {
 		background-color: var(--color-bg);
+	}
+
+	/* Saved for later use — not applied anywhere currently.
+	   Grid-paper background: add class="bg-grid" (and optionally "bg-grid-fade")
+	   to a positioned element to bring it back. */
+	.bg-grid {
 		position: relative;
 	}
 
-	body::before {
+	.bg-grid::before {
 		content: '';
 		position: fixed;
 		inset: 0;
 		z-index: -1;
 		background-image:
-			linear-gradient(to right, oklch(0.9 0.005 315) 1px, transparent 1px),
-			linear-gradient(to bottom, oklch(0.9 0.005 315) 1px, transparent 1px);
-		background-size: 24px 24px;
+			linear-gradient(to right, oklch(0.94 0.003 315) 1px, transparent 1px),
+			linear-gradient(to bottom, oklch(0.94 0.003 315) 1px, transparent 1px);
+		background-size: 20px 20px;
+	}
+
+	.bg-grid.bg-grid-fade::before {
 		mask-image: linear-gradient(to right, black 0%, transparent 25%, transparent 75%, black 100%);
 		-webkit-mask-image: linear-gradient(
 			to right,

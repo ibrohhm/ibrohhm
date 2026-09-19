@@ -1,8 +1,29 @@
 ---
 const modules = import.meta.glob('../pages/article/*.mdx', { eager: true }) as Record<
 	string,
-	{ frontmatter: { title: string; description: string } }
+	{ frontmatter: { title: string; description: string; tags?: string[]; createdAt: string } }
 >;
+
+const rawModules = import.meta.glob('../pages/article/*.mdx', {
+	eager: true,
+	query: '?raw',
+	import: 'default',
+}) as Record<string, string>;
+
+function estimateReadingMinutes(raw: string): number {
+	const text = raw
+		.replace(/^---[\s\S]*?---/, '')
+		.replace(/^import .*/gm, '')
+		.replace(/<LineChart[\s\S]*?\/>/g, '')
+		.replace(/<PlantUML[\s\S]*?\/>/g, '')
+		.replace(/<img[\s\S]*?\/>/g, '')
+		.replace(/```[\s\S]*?```/g, '')
+		.replace(/<[^>]+>/g, ' ')
+		.replace(/[#*_>`]/g, '');
+
+	const words = text.trim().split(/\s+/).filter(Boolean).length;
+	return Math.max(1, Math.ceil(words / 200));
+}
 
 const sorted = Object.entries(modules)
 	.map(([path, mod]) => {
@@ -10,10 +31,13 @@ const sorted = Object.entries(modules)
 		return {
 			title: mod.frontmatter.title,
 			description: mod.frontmatter.description,
+			tags: mod.frontmatter.tags ?? [],
+			createdAt: mod.frontmatter.createdAt,
+			readingMinutes: estimateReadingMinutes(rawModules[path]),
 			url: `/article/${slug}`,
 		};
 	})
-	.sort((a, b) => a.title.localeCompare(b.title));
+	.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 ---
 
 <section class="articles" id="articles">
@@ -22,6 +46,14 @@ const sorted = Object.entries(modules)
 			<a class="card" href={article.url}>
 				<h3>{article.title}</h3>
 				<p>{article.description}</p>
+				{article.tags.length > 0 && (
+					<div class="tags">
+						{article.tags.map((tag) => (
+							<span class="tag">{tag}</span>
+						))}
+					</div>
+				)}
+				<p class="meta">{article.readingMinutes} min read</p>
 			</a>
 		))
 	}
@@ -33,15 +65,21 @@ const sorted = Object.entries(modules)
 		flex-direction: column;
 		gap: 1rem;
 		padding-bottom: 2rem;
+		margin-top: 3rem;
 	}
 
 	.card {
 		display: block;
-		background: var(--color-surface);
+		position: relative;
+		background: var(--color-card);
 		padding: 1.5rem;
+		padding-bottom: 2.5rem;
 		border-radius: 8px;
+		border: 1px solid oklch(0.9 0.005 315);
 		text-decoration: none;
 		transition: background 0.2s;
+		color: black;
+		margin: 0.5rem 0;
 	}
 
 	.card:hover {
@@ -52,9 +90,35 @@ const sorted = Object.entries(modules)
 		margin: 0 0 0.5rem;
 	}
 
+	.card .meta {
+		position: absolute;
+		bottom: 1rem;
+		right: 1.5rem;
+		font-family: var(--font-body);
+		font-size: 0.8125rem;
+		color: grey;
+		margin: 0;
+	}
+
 	.card p {
 		font-size: 1rem;
 		margin: 0;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+
+	.tag {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--color-plum);
+		background: var(--color-surface);
+		padding: 0.2rem 0.6rem;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

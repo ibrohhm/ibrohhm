@@ -4,11 +4,12 @@ import Header from '../components/Header.astro';
 interface Props {
 	title?: string;
 	description?: string;
-	frontmatter?: { title?: string; description?: string; article?: boolean };
+	frontmatter?: { title?: string; description?: string; article?: boolean; tags?: string[] };
 	article?: boolean;
 }
 
 const { title, description, frontmatter, article } = Astro.props;
+const tags = frontmatter?.tags ?? [];
 const pageTitle = title ?? frontmatter?.title ?? 'Astro Basics';
 const pageDescription =
 	description ?? frontmatter?.description ?? 'Software engineer — portfolio and technical writing.';
@@ -46,6 +47,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		{
 			isArticle ? (
 				<div class="article">
+					{tags.length > 0 && (
+						<div class="article-tags">
+							{tags.map((tag) => (
+								<span class="article-tag">{tag}</span>
+							))}
+						</div>
+					)}
 					<slot />
 				</div>
 			) : (
@@ -61,6 +69,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		--color-amber: oklch(0.52 0.14 70);
 		--color-bg: oklch(0.98 0 0);
 		--color-surface: oklch(0.96 0.005 315);
+		--color-card: oklch(0.99 0 0);
 		--color-ink: oklch(0.18 0.02 315);
 		--color-muted: oklch(0.48 0.01 315);
 
@@ -112,11 +121,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 	.article {
 		width: min(90%, 70ch);
 		margin: 0 auto;
-		padding: 3rem 0;
+		padding: 6rem 0;
 		font-family: var(--font-body);
 		font-size: 1.125rem;
 		line-height: 1.7;
 		color: var(--color-ink);
+	}
+
+	.article-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.article-tag {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--color-plum);
+		background: var(--color-surface);
+		padding: 0.2rem 0.6rem;
 	}
 
 	a {
@@ -138,8 +163,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 	h1 {
 		font-size: clamp(2.25rem, 5vw, 3.5rem);
 		line-height: 1.1;
-		letter-spacing: -0.02em;
-		margin: 0 0 1.5rem;
+		letter-spacing: 0.1em;
+		margin: 0 0 2.5rem;
 	}
 
 	h2 {

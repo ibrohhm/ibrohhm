@@ -1,19 +1,17 @@
 ---
 import Header from '../components/Header.astro';
+import '../styles/global.css';
 
 interface Props {
 	title?: string;
 	description?: string;
-	frontmatter?: { title?: string; description?: string; article?: boolean; tags?: string[] };
-	article?: boolean;
+	ogType?: string;
+	bodyClass?: string;
 }
 
-const { title, description, frontmatter, article } = Astro.props;
-const tags = frontmatter?.tags ?? [];
-const pageTitle = title ?? frontmatter?.title ?? 'Astro Basics';
-const pageDescription =
-	description ?? frontmatter?.description ?? 'Software engineer — portfolio and technical writing.';
-const isArticle = article ?? frontmatter?.article ?? false;
+const { title, description, ogType = 'website', bodyClass = 'bg-grid' } = Astro.props;
+const pageTitle = title ?? 'Astro Basics';
+const pageDescription = description ?? 'Software engineer — portfolio and technical writing.';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifibrohim.me');
 ---
 
@@ -26,7 +24,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 		<title>{pageTitle}</title>
 		<meta name="description" content={pageDescription} />
 		<link rel="canonical" href={canonicalURL} />
-		<meta property="og:type" content={isArticle ? 'article' : 'website'} />
+		<meta property="og:type" content={ogType} />
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={pageDescription} />
 		<meta property="og:url" content={canonicalURL} />
@@ -40,210 +38,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 			rel="stylesheet"
 		/>
 	</head>
-	<body class={isArticle ? 'bg-grid bg-grid-fade' : 'bg-grid'}>
+	<body class={bodyClass}>
 		<Header />
-		{
-			isArticle ? (
-				<div class="article">
-					{tags.length > 0 && (
-						<div class="article-tags">
-							{tags.map((tag) => (
-								<span class="article-tag">{tag}</span>
-							))}
-						</div>
-					)}
-					<slot />
-				</div>
-			) : (
-				<slot />
-			)
-		}
+		<slot />
 	</body>
 </html>
-
-<style is:global>
-	:root {
-		--color-plum: oklch(0.38 0.15 315);
-		--color-amber: oklch(0.52 0.14 70);
-		--color-bg: oklch(0.98 0 0);
-		--color-surface: oklch(0.96 0.005 315);
-		--color-card: oklch(0.99 0 0);
-		--color-ink: rgb(89, 89, 89);
-		--color-muted: oklch(0.48 0.01 315);
-
-		--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
-		--font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-			sans-serif;
-		--font-mono: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
-	}
-
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-		color: var(--color-ink);
-	}
-
-	body {
-		background-color: var(--color-bg);
-	}
-
-	/* Saved for later use — not applied anywhere currently.
-	   Grid-paper background: add class="bg-grid" (and optionally "bg-grid-fade")
-	   to a positioned element to bring it back. */
-	.bg-grid {
-		position: relative;
-	}
-
-	.bg-grid::before {
-		content: '';
-		position: fixed;
-		inset: 0;
-		z-index: -1;
-		background-image:
-			linear-gradient(to right, oklch(0.94 0.003 315) 1px, transparent 1px),
-			linear-gradient(to bottom, oklch(0.94 0.003 315) 1px, transparent 1px);
-		background-size: 20px 20px;
-	}
-
-	.bg-grid.bg-grid-fade::before {
-		mask-image: linear-gradient(to right, black 0%, transparent 25%, transparent 75%, black 100%);
-		-webkit-mask-image: linear-gradient(
-			to right,
-			black 0%,
-			transparent 25%,
-			transparent 75%,
-			black 100%
-		);
-	}
-
-	a:focus-visible,
-	button:focus-visible {
-		outline: 2px solid var(--color-plum);
-		outline-offset: 2px;
-		border-radius: 2px;
-	}
-
-	.article {
-		width: min(90%, 70ch);
-		margin: 0 auto;
-		padding: 6rem 0;
-		font-family: var(--font-body);
-		font-size: 1.125rem;
-		line-height: 1.7;
-		color: var(--color-ink);
-	}
-
-	.article-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 1.5rem;
-	}
-
-	.article-tag {
-		font-family: var(--font-body);
-		font-size: 0.75rem;
-		font-weight: 500;
-		color: var(--color-plum);
-		background: var(--color-surface);
-		padding: 0.2rem 0.6rem;
-	}
-
-	a {
-		color: var(--color-plum);
-	}
-
-	a:hover {
-		text-decoration-color: var(--color-amber);
-	}
-
-	h1,
-	h2,
-	h3 {
-		font-family: var(--font-body);
-		font-weight: 600;
-		text-wrap: balance;
-	}
-
-	h1 {
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
-		line-height: 1.1;
-		letter-spacing: 0.1em;
-		margin: 0 0 2.5rem;
-	}
-
-	h2 {
-		font-size: 2rem;
-		line-height: 1.3;
-		margin: 2.5rem 0 1rem;
-	}
-
-	h3 {
-		font-size: 1.4rem;
-		margin: 2rem 0 0.75rem;
-	}
-
-	p {
-		margin: 0 0 1.25rem;
-		text-wrap: pretty;
-	}
-
-	blockquote {
-		margin: 0 0 1.25rem;
-		padding: 0;
-		font-style: italic;
-		color: var(--color-muted);
-	}
-
-	ul,
-	ol {
-		margin: 0 0 1.25rem;
-		padding-left: 1.5rem;
-	}
-
-	.plantuml {
-		text-align: center;
-		margin: 2rem 0;
-	}
-
-	.formula {
-		text-align: center;
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin: 2rem 0;
-    background-color: var(--color-surface);
-    padding: 4px;
-	}
-
-	code {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-		background: var(--color-surface);
-		padding: 0.15em 0.4em;
-		border-radius: 4px;
-	}
-
-	pre {
-		padding: 0.75rem 1.25rem;
-		border-radius: 8px;
-		overflow-x: auto;
-		margin: 0 0 1.25rem;
-		line-height: 1.4;
-		tab-size: 2;
-	}
-
-	pre code {
-		background: none;
-		padding: 0;
-		font-size: 0.875rem;
-	}
-
-	img,
-	svg {
-		display: block;
-		max-width: 100%;
-		margin: 0 auto 1.25rem;
-	}
-</style>

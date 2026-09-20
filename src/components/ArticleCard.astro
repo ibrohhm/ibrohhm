@@ -1,0 +1,65 @@
+---
+import Tags from './Tags.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	tags: string[];
+	readingMinutes: number;
+	url: string;
+}
+
+const { title, description, tags, readingMinutes, url } = Astro.props;
+---
+
+<a class="article-card" href={url}>
+	<h3>{title}</h3>
+	<p>{description}</p>
+	<Tags tags={tags} />
+	<p class="meta">{readingMinutes} min read</p>
+</a>
+
+<style>
+	.article-card {
+		display: block;
+		position: relative;
+		background: var(--color-card);
+		padding: 1.5rem;
+		padding-bottom: 2.5rem;
+		border-radius: 8px;
+		border: 1px solid oklch(0.9 0.005 315);
+		text-decoration: none;
+		transition: background 0.2s;
+		color: rgb(89, 89, 89);;
+		margin: 0.5rem 0;
+	}
+
+	.article-card:hover {
+		background: color-mix(in oklch, var(--color-surface), var(--color-plum) 6%);
+	}
+
+	.article-card h3 {
+		margin: 0 0 0.5rem;
+	}
+
+	.article-card .meta {
+		position: absolute;
+		bottom: 1rem;
+		right: 1.5rem;
+		font-family: var(--font-body);
+		font-size: 0.8125rem;
+		color: grey;
+		margin: 0;
+	}
+
+	.article-card p {
+		font-size: 1rem;
+		margin: 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.article-card {
+			transition: none;
+		}
+	}
+</style>

@@ -1,9 +1,18 @@
 ---
 import ArticleList from '../components/ArticleList.astro';
-import Layout from '../layouts/Layout.astro';
+import ArticleLayout from '../layouts/ArticleLayout.astro';
 ---
 
-<Layout title="Articles — Syarif Ibrohim" description="Technical writing on backend engineering, resilience patterns, and observability." article>
+<ArticleLayout title="Articles — Syarif Ibrohim" description="Technical writing on backend engineering, resilience patterns, and observability.">
 	<h1>Articles</h1>
+	<p class="subtitle">Writing about things I broke, fixed, or learned. Please take a look and enjoy.</p>
 	<ArticleList />
-</Layout>
+</ArticleLayout>
+
+<style>
+	.subtitle {
+		margin-top: -1.5rem;
+		margin-bottom: 3rem;
+		color: var(--color-muted);
+	}
+</style>

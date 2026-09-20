@@ -1,0 +1,28 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<Layout title={title} description={description} ogType="article" bodyClass="bg-grid bg-grid-fade">
+	<div class="project">
+		<slot />
+	</div>
+</Layout>
+
+<style>
+	.project {
+		width: min(90%, 1200px);
+		margin: 0 auto;
+		padding: 6rem 0;
+		font-family: var(--font-body);
+		font-size: 1.125rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+	}
+</style>

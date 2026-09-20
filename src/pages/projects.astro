@@ -1,0 +1,123 @@
+---
+import ProjectLayout from '../layouts/ProjectLayout.astro';
+
+const categories = [
+	{
+		title: 'AI',
+		projects: [
+			{ name: 'agent-team', url: 'https://github.com/ibrohhm/agent-team', description: 'Multi-agent team collaboration' },
+			{ name: 'jira-implementer', url: 'https://github.com/ibrohhm/jira-implementer', description: 'AI agent that implements Jira tickets' },
+			{ name: 'telegram-claude-bot', url: 'https://github.com/ibrohhm/telegram-claude-bot', description: 'Telegram bot powered by Claude AI' },
+		],
+	},
+	{
+		title: 'Back End',
+		projects: [
+			{ name: 'clean-architecture', url: 'https://github.com/ibrohhm/clean-architecture', description: 'Implement Clean Architecture using Go' },
+			{ name: 'kafka-conductor-golang', url: 'https://github.com/ibrohhm/kafka-conductor-golang', description: 'Kafka consumer orchestration in Go' },
+			{ name: 'prometheus-grafana-golang', url: 'https://github.com/ibrohhm/prometheus-grafana-golang', description: 'Prometheus and Grafana monitoring setup with Go' },
+			{ name: 'crash and timeout simulation', url: 'https://github.com/ibrohhm/crash_and_timeout_simulation', description: 'Crash and timeout simulation' },
+			{ name: 'toggle-feature', url: 'https://github.com/ibrohhm/toggle-feature', description: 'Feature flag toggle implementation in Go' },
+			{ name: 'jwt-ruby', url: 'https://github.com/ibrohhm/jwt-ruby', description: 'JWT token-based auth with Ruby on Rails' },
+			{ name: 'golang-gin', url: 'https://github.com/ibrohhm/golang-gin', description: 'REST API boilerplate with Go and Gin' },
+			{ name: 'response', url: 'https://github.com/ibrohhm/response', description: 'Go HTTP response wrapper' },
+			{ name: 'prime-factors', url: 'https://github.com/ibrohhm/prime-factors', description: 'Benchmark checking prime factors with/without goroutines' },
+			{ name: 'sudoku-solver', url: 'https://github.com/ibrohhm/sudoku-solver', description: 'Sudoku solver using backtracking' },
+			{ name: 'go-mongodb', url: 'https://github.com/ibrohhm/go-mongodb', description: 'Simple CRUD using Go and MongoDB' },
+			{ name: 'learn-sinatra-crud-api', url: 'https://github.com/ibrohhm/learn-sinatra-crud-api', description: 'Simple CRUD using Sinatra Ruby' },
+		],
+	},
+	{
+		title: 'Front End',
+		projects: [
+			{ name: 'workflow-ui', url: 'https://github.com/ibrohhm/workflow-ui', description: 'Interactive flowchart canvas built with React Flow and Next.js' },
+			{ name: 'intranet-ui', url: 'https://github.com/ibrohhm/intranet-ui', description: 'Intranet dashboard UI' },
+			{ name: 'multi-window', url: 'https://github.com/ibrohhm/multi-window', description: 'Multi-window browser interaction' },
+			{ name: 'mimic-github', url: 'https://github.com/ibrohhm/mimic-github', description: 'GitHub UI clone' },
+			{ name: 'calendar-challenge', url: 'https://github.com/ibrohhm/calendar-challenge', description: 'Calendar UI challenge' },
+			{ name: 'Snake Game', url: 'https://codepen.io/colorcreate/details/WNQbrar', description: 'Snake game' },
+			{ name: 'webpack-vue-buefy', url: 'https://github.com/ibrohhm/webpack-vue-buefy', description: 'Vue.js starter with Webpack and Buefy' },
+			{ name: 'Gravity Balls', url: 'https://codepen.io/colorcreate/pen/BOzKMP', description: 'Ball movements around a single gravity point' },
+			{ name: 'Rain Balls', url: 'https://codepen.io/colorcreate/pen/rZLeKB', description: 'Falling ball movements' },
+			{ name: 'Prime Count', url: 'https://codepen.io/colorcreate/pen/ZMOOEG', description: 'Finding the next prime number' },
+			{ name: 'Color Touch', url: 'https://codepen.io/colorcreate/pen/VGmeZX', description: 'Touch-reactive color effect' },
+			{ name: 'Banana', url: 'https://ibrohhm.github.io/banana/', description: 'Banana everywhere' },
+		],
+	},
+];
+---
+
+<ProjectLayout title="Projects — Syarif Ibrohim" description="Backend, frontend, and AI projects.">
+	<h1>Projects</h1>
+	<p class="subtitle">Things I've built, experimented with, and brought to life.</p>
+
+	<div class="project-categories">
+		{
+			categories.map((category) => (
+				<div class="project-category">
+					<h2>{category.title}</h2>
+					<ul class="project-list">
+						{category.projects.map((project) => (
+							<li class="project-item">
+								<a class="project-item--title" href={project.url} target="_blank" rel="noopener noreferrer">
+									{project.name}
+								</a>
+								<div class="project-item--description">{project.description}</div>
+							</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</div>
+</ProjectLayout>
+
+<style>
+	.subtitle {
+		margin-top: -1.5rem;
+		margin-bottom: 3rem;
+		color: var(--color-muted);
+	}
+
+	.project-categories {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2rem;
+		align-items: start;
+	}
+
+	@media (max-width: 700px) {
+		.project-categories {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.project-list{
+		padding-left: 0;
+		list-style: none;
+		margin: 0 0 2rem;
+
+		.project-item{
+			margin-bottom: 0.75rem;
+			line-height: 1.6;
+
+			.project-item--title{
+				display: block;
+				color: inherit;
+				text-decoration: none;
+				font-size: 1rem;
+				transition: font-size 0.15s;
+			}
+
+			.project-item--title:hover {
+				text-decoration: underline;
+				font-size: 1.1rem;
+			}
+
+			.project-item--description{
+				color: gray;
+				font-size: 12px;
+			}
+		}
+	}
+</style>

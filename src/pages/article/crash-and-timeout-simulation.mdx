@@ -1,8 +1,7 @@
 ---
-layout: ../../layouts/Layout.astro
+layout: ../../layouts/ArticleLayout.astro
 title: Crash and Timeout Simulation
 description: How external service delays can destabilize your application, demonstrated with a client-server-partner Go simulation, and why request timeouts prevent it.
-article: true
 tags: [Go, Resilience, Timeout]
 createdAt: "2024-07-21"
 ---
@@ -125,3 +124,5 @@ But this is just a simulation, the request rate may vary in real cases, and ther
 Another solution that can control the request is a rate limiter that shrinks the request rate,
 or a circuit breaker that can automatically stop sending requests once the external service is failing.
 A resilient integration usually leans on all three together, not just one.
+
+Code: [github.com/ibrohhm/crash_and_timeout_simulation](https://github.com/ibrohhm/crash_and_timeout_simulation)

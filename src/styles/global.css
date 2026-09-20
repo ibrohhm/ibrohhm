@@ -1,0 +1,102 @@
+:root {
+	--color-plum: oklch(0.38 0.15 315);
+	--color-amber: oklch(0.52 0.14 70);
+	--color-bg: oklch(0.98 0 0);
+	--color-surface: oklch(0.96 0.005 315);
+	--color-card: oklch(0.99 0 0);
+	--color-ink: rgb(89, 89, 89);
+	--color-muted: oklch(0.48 0.01 315);
+
+	--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
+	--font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+		sans-serif;
+	--font-mono: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
+}
+
+html,
+body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	color: var(--color-ink);
+}
+
+body {
+	background-color: var(--color-bg);
+}
+
+/* Saved for later use — not applied anywhere currently.
+   Grid-paper background: add class="bg-grid" (and optionally "bg-grid-fade")
+   to a positioned element to bring it back. */
+.bg-grid {
+	position: relative;
+}
+
+.bg-grid::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	background-image:
+		linear-gradient(to right, oklch(0.94 0.003 315) 1px, transparent 1px),
+		linear-gradient(to bottom, oklch(0.94 0.003 315) 1px, transparent 1px);
+	background-size: 20px 20px;
+}
+
+.bg-grid.bg-grid-fade::before {
+	mask-image: linear-gradient(to right, black 0%, transparent 25%, transparent 75%, black 100%);
+	-webkit-mask-image: linear-gradient(
+		to right,
+		black 0%,
+		transparent 25%,
+		transparent 75%,
+		black 100%
+	);
+}
+
+a:focus-visible,
+button:focus-visible {
+	outline: 2px solid var(--color-plum);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+a {
+	color: var(--color-plum);
+}
+
+a:hover {
+	text-decoration-color: var(--color-amber);
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-body);
+	font-weight: 600;
+	text-wrap: balance;
+}
+
+h1 {
+	font-size: clamp(2.25rem, 5vw, 3.5rem);
+	line-height: 1.1;
+	letter-spacing: 0.1em;
+	margin: 0 0 2.5rem;
+}
+
+h2 {
+	font-size: 2rem;
+	line-height: 1.3;
+	margin: 2.5rem 0 1rem;
+}
+
+h3 {
+	font-size: 1.4rem;
+	margin: 2rem 0 0.75rem;
+}
+
+p {
+	margin: 0 0 1.25rem;
+	text-wrap: pretty;
+}
+

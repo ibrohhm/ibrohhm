@@ -2,6 +2,7 @@
 const navLinks = [
 	{ label: 'Home', href: '/' },
 	{ label: 'Articles', href: '/articles' },
+	{ label: 'Projects', href: '/projects' },
 ];
 
 const socialLinks = [
@@ -12,6 +13,8 @@ const socialLinks = [
 ---
 
 <header class="site-header">
+	<input type="checkbox" id="nav-toggle" class="nav-toggle" />
+
 	<nav class="nav-left">
 		{
 			navLinks.map((link) => (
@@ -20,6 +23,27 @@ const socialLinks = [
 		}
 	</nav>
 	<nav class="nav-right">
+		{
+			socialLinks.map((link) => (
+				<a href={link.href} target="_blank" rel="noopener noreferrer">
+					{link.label}
+				</a>
+			))
+		}
+	</nav>
+
+	<label for="nav-toggle" class="hamburger" aria-label="Toggle menu">
+		<span></span>
+		<span></span>
+		<span></span>
+	</label>
+
+	<nav class="mobile-nav">
+		{
+			navLinks.map((link) => (
+				<a href={link.href}>{link.label}</a>
+			))
+		}
 		{
 			socialLinks.map((link) => (
 				<a href={link.href} target="_blank" rel="noopener noreferrer">
@@ -43,6 +67,10 @@ const socialLinks = [
 		padding: 1.5rem 2rem;
 	}
 
+	.nav-toggle {
+		display: none;
+	}
+
 	.nav-left,
 	.nav-right {
 		display: flex;
@@ -59,5 +87,70 @@ const socialLinks = [
 
 	.site-header a:hover {
 		color: var(--color-plum);
+	}
+
+	.hamburger {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		width: 24px;
+		height: 24px;
+		cursor: pointer;
+	}
+
+	.hamburger span {
+		display: block;
+		width: 100%;
+		height: 2px;
+		background: var(--color-ink);
+		transition:
+			transform 0.2s,
+			opacity 0.2s;
+	}
+
+	.mobile-nav {
+		display: none;
+	}
+
+	@media (max-width: 700px) {
+		.nav-left,
+		.nav-right {
+			display: none;
+		}
+
+		.hamburger {
+			display: flex;
+		}
+
+		.mobile-nav {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			width: 100%;
+			box-sizing: border-box;
+			flex-direction: column;
+			gap: 1.25rem;
+			padding: 1.5rem 2rem 2rem;
+			background: var(--color-bg);
+			border-top: 1px solid oklch(0.9 0.005 315);
+			transform: translateY(-1px);
+		}
+
+		.nav-toggle:checked ~ .mobile-nav {
+			display: flex;
+		}
+
+		.nav-toggle:checked ~ .hamburger span:nth-child(1) {
+			transform: translateY(7px) rotate(45deg);
+		}
+
+		.nav-toggle:checked ~ .hamburger span:nth-child(2) {
+			opacity: 0;
+		}
+
+		.nav-toggle:checked ~ .hamburger span:nth-child(3) {
+			transform: translateY(-7px) rotate(-45deg);
+		}
 	}
 </style>

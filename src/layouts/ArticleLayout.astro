@@ -1,0 +1,186 @@
+---
+import Layout from './Layout.astro';
+import Tags from '../components/Tags.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	frontmatter?: { title?: string; description?: string; tags?: string[] };
+}
+
+const { title, description, frontmatter } = Astro.props;
+const pageTitle = title ?? frontmatter?.title;
+const pageDescription = description ?? frontmatter?.description;
+const tags = frontmatter?.tags ?? [];
+
+const articleModules = import.meta.glob('../pages/article/*.mdx', { eager: true }) as Record<
+	string,
+	{ frontmatter: { title: string; createdAt: string } }
+>;
+
+const sortedArticles = Object.entries(articleModules)
+	.map(([path, mod]) => ({
+		slug: path.split('/').pop()!.replace(/\.mdx$/, ''),
+		title: mod.frontmatter.title,
+		createdAt: mod.frontmatter.createdAt,
+	}))
+	.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+const currentSlug = Astro.url.pathname.split('/').filter(Boolean).pop();
+const currentIndex = sortedArticles.findIndex((a) => a.slug === currentSlug);
+const prevArticle = currentIndex > 0 ? sortedArticles[currentIndex - 1] : null;
+const nextArticle =
+	currentIndex !== -1 && currentIndex < sortedArticles.length - 1 ? sortedArticles[currentIndex + 1] : null;
+---
+
+<Layout title={pageTitle} description={pageDescription} ogType="article" bodyClass="bg-grid bg-grid-fade">
+	<div class="article">
+		<Tags tags={tags} />
+		<slot />
+		{
+			(prevArticle || nextArticle) && (
+				<nav class="article-nav">
+					{prevArticle && (
+						<a class="article-nav__link article-nav__link--prev" href={`/article/${prevArticle.slug}`}>
+							<span class="article-nav__label">← Previous</span>
+							<span class="article-nav__title">{prevArticle.title}</span>
+						</a>
+					)}
+					{nextArticle && (
+						<a class="article-nav__link article-nav__link--next" href={`/article/${nextArticle.slug}`}>
+							<span class="article-nav__label">Next →</span>
+							<span class="article-nav__title">{nextArticle.title}</span>
+						</a>
+					)}
+				</nav>
+			)
+		}
+	</div>
+</Layout>
+
+<style>
+	.article {
+		width: min(90%, 70ch);
+		margin: 0 auto;
+		padding: 6rem 0;
+		font-family: var(--font-body);
+		font-size: 1.125rem;
+		line-height: 1.7;
+		color: var(--color-ink);
+	}
+
+	.article-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid oklch(0.9 0.005 315);
+	}
+
+	.article-nav__link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		text-decoration: none;
+		padding: 1rem;
+		border-radius: 8px;
+		transition: background 0.2s;
+	}
+
+	.article-nav__link:hover {
+		background: color-mix(in oklch, var(--color-surface), var(--color-plum) 6%);
+	}
+
+	.article-nav__link--prev {
+		grid-column: 1;
+	}
+
+	.article-nav__link--next {
+		grid-column: 2;
+		text-align: right;
+		margin-left: auto;
+	}
+
+	.article-nav__label {
+		font-family: var(--font-body);
+		font-size: 0.75rem;
+		color: var(--color-muted);
+	}
+
+	.article-nav__title {
+		font-weight: 600;
+		color: var(--color-ink);
+	}
+
+	@media (max-width: 600px) {
+		.article-nav {
+			grid-template-columns: 1fr;
+		}
+
+		.article-nav__link--next {
+			grid-column: 1;
+			text-align: left;
+			margin-left: 0;
+		}
+	}
+</style>
+
+<style is:global>
+	.article blockquote {
+		margin: 0 0 1.25rem;
+		padding: 0;
+		font-style: italic;
+		color: var(--color-muted);
+	}
+
+	.article ul,
+	.article ol {
+		margin: 0 0 1.25rem;
+		padding-left: 1.5rem;
+	}
+
+	.article .plantuml {
+		text-align: center;
+		margin: 2rem 0;
+	}
+
+	.article .formula {
+		text-align: center;
+		font-size: 1.5rem;
+		font-weight: 400;
+		margin: 2rem 0;
+		background-color: var(--color-surface);
+		padding: 4px;
+	}
+
+	.article code {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		background: var(--color-surface);
+		padding: 0.15em 0.4em;
+		border-radius: 4px;
+	}
+
+	.article pre {
+		padding: 0.75rem 1.25rem;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin: 0 0 1.25rem;
+		line-height: 1.4;
+		tab-size: 2;
+	}
+
+	.article pre code {
+		background: none;
+		padding: 0;
+		font-size: 0.875rem;
+	}
+
+	.article img,
+	.article svg {
+		display: block;
+		max-width: 100%;
+		margin: 0 auto 1.25rem;
+	}
+</style>

@@ -23,6 +23,7 @@ Technical writing on backend engineering, resilience patterns, and observability
 - [agent-team](https://github.com/ibrohhm/agent-team) — Multi-agent team collaboration
 - [jira-implementer](https://github.com/ibrohhm/jira-implementer) — AI agent that implements Jira tickets
 - [telegram-claude-bot](https://github.com/ibrohhm/telegram-claude-bot) — Telegram bot powered by Claude AI
+- [tickboard-mcp](https://github.com/ibrohhm/tickboard-mcp) — MCP server for nested checklists with a React UI
 
 ## Back End
 

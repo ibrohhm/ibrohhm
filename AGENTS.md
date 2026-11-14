@@ -8,6 +8,20 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Keeping This File Current
+
+After any change that alters documented behavior, conventions, or structure, update this file in the same turn if needed. Edit `AGENTS.md` directly; `CLAUDE.md` is a symlink to it.
+
+## Grid Background
+
+Defined in `src/styles/global.css` (`.bg-grid`, optional `.bg-grid-fade`), applied via `bodyClass` in layouts.
+
+- Cell size: 12px
+- Grid is the `body` `background-image`, so it tiles over the whole canvas and scrolls with the page (no pseudo-element sized to body, which left empty gaps)
+- Top fade: viewport-fixed `::after` overlay, 180px, bg color → transparent, so the grid fades out under the header. It looked empty when scrolling the homepage, which is why the homepage is locked (`no-scroll`)
+- `.bg-grid-fade` adds a viewport-fixed `::before` overlay in the bg color that hides the grid behind the center column
+- Homepage passes `bodyClass="bg-grid no-scroll"`: `.no-scroll` locks scroll/overscroll on `html` and `body`, so no rubber-band exposes the edge of the grid
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

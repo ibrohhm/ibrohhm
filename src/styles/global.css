@@ -17,7 +17,6 @@ html,
 body {
 	margin: 0;
 	width: 100%;
-	height: 100%;
 	color: var(--color-ink);
 }
 
@@ -29,28 +28,46 @@ body {
    Grid-paper background: add class="bg-grid" (and optionally "bg-grid-fade")
    to a positioned element to bring it back. */
 .bg-grid {
-	position: relative;
-}
-
-.bg-grid::before {
-	content: '';
-	position: fixed;
-	inset: 0;
-	z-index: -1;
 	background-image:
 		linear-gradient(to right, oklch(0.94 0.003 315) 1px, transparent 1px),
 		linear-gradient(to bottom, oklch(0.94 0.003 315) 1px, transparent 1px);
-	background-size: 20px 20px;
+	background-size: 12px 12px;
+}
+
+.bg-grid::after {
+	content: '';
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 180px;
+	z-index: -1;
+	pointer-events: none;
+	background: linear-gradient(to bottom, var(--color-bg), transparent);
+}
+
+html:has(body.no-scroll),
+body.no-scroll {
+	height: 100%;
+	overflow: hidden;
+	overscroll-behavior: none;
 }
 
 .bg-grid.bg-grid-fade::before {
-	mask-image: linear-gradient(to right, black 0%, transparent 25%, transparent 75%, black 100%);
-	-webkit-mask-image: linear-gradient(
+	content: '';
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	pointer-events: none;
+	background: linear-gradient(
 		to right,
-		black 0%,
-		transparent 25%,
-		transparent 75%,
-		black 100%
+		transparent 0%,
+		var(--color-bg) 25%,
+		var(--color-bg) 75%,
+		transparent 100%
 	);
 }
 

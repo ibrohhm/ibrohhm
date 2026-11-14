@@ -13,53 +13,86 @@ const { title, description, tags, readingMinutes, url } = Astro.props;
 ---
 
 <a class="article-card" href={url}>
-	<h3>{title}</h3>
-	<p>{description}</p>
-	<Tags tags={tags} />
-	<p class="meta">{readingMinutes} min read</p>
+	<div class="face">
+		<h3>{title}</h3>
+		<p class="description">{description}</p>
+		<div class="foot">
+			<Tags tags={tags} />
+			<span class="meta">{readingMinutes} min read</span>
+		</div>
+	</div>
 </a>
 
 <style>
 	.article-card {
 		display: block;
 		position: relative;
-		background: var(--color-card);
-		padding: 1.5rem;
-		padding-bottom: 2.5rem;
-		border-radius: 8px;
-		border: 1px solid oklch(0.9 0.005 315);
+		margin: 0.5rem 0 0.5rem 0.25rem;
+		color: var(--color-ink);
 		text-decoration: none;
-		transition: background 0.2s;
-		color: rgb(89, 89, 89);;
-		margin: 0.5rem 0;
 	}
 
-	.article-card:hover {
-		background: color-mix(in oklch, var(--color-surface), var(--color-plum) 6%);
+	.article-card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 8px;
+		background: var(--color-orange);
+		transform: translate(-0.25rem, 0.25rem);
+	}
+
+	.face {
+		position: relative;
+		padding: 1.5rem;
+		border: 1px solid oklch(0.9 0.005 315);
+		border-radius: 8px;
+		background: var(--color-card);
+		transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+	}
+
+	.article-card:hover .face {
+		transform: translate(0.375rem, -0.375rem);
 	}
 
 	.article-card h3 {
 		margin: 0 0 0.5rem;
+		text-wrap: balance;
 	}
 
-	.article-card .meta {
-		position: absolute;
-		bottom: 1rem;
-		right: 1.5rem;
+	.description {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--color-muted);
+	}
+
+	.foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 1rem;
+		margin-top: 1.25rem;
+	}
+
+	.foot :global(.tags) {
+		margin-top: 0;
+	}
+
+	.meta {
+		margin-left: auto;
 		font-family: var(--font-body);
 		font-size: 0.8125rem;
-		color: grey;
-		margin: 0;
-	}
-
-	.article-card p {
-		font-size: 1rem;
-		margin: 0;
+		color: var(--color-muted);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.article-card {
+		.face {
 			transition: none;
+		}
+
+		.article-card:hover .face {
+			transform: none;
 		}
 	}
 </style>

@@ -22,6 +22,10 @@ Defined in `src/styles/global.css` (`.bg-grid`, optional `.bg-grid-fade`), appli
 - `.bg-grid-fade` adds a viewport-fixed `::before` overlay in the bg color that hides the grid behind the center column
 - Homepage passes `bodyClass="bg-grid no-scroll"`: `.no-scroll` locks scroll/overscroll on `html` and `body`, so no rubber-band exposes the edge of the grid
 
+## Article Card
+
+`src/components/ArticleCard.astro`: a solid orange block (`--color-orange`, `::before`, hard edge, no blur) sits offset down-left behind the card face. On hover only the card face lifts diagonally up-right, away from the block (colors unchanged); the block stays put. Footer row holds tags (left) and read time (right); description is muted ink. Tag chips (`Tags.astro`) use a 30% orange background (translucent, text stays solid) with text inheriting the parent color.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

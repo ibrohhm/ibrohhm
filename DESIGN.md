@@ -4,6 +4,7 @@ description: Personal engineering portfolio and technical writing site
 colors:
   plum: "oklch(0.38 0.15 315)"
   amber: "oklch(0.52 0.14 70)"
+  orange: "oklch(0.72 0.16 55)"
   bg: "oklch(0.98 0 0)"
   surface: "oklch(0.96 0.005 315)"
   ink: "oklch(0.18 0.02 315)"
@@ -74,6 +75,7 @@ Restrained-but-committed: a single deep plum carries identity across both pages;
 
 ### Secondary
 - **Amber** (oklch(0.52 0.14 70)): Small highlight moments only — inline emphasis marks, hover underline color on secondary links. Never carries large surface area.
+- **Orange** (oklch(0.72 0.16 55)): Used for the offset block behind each article card and the tag chip background (text inherits the parent color). Brighter than Amber so it reads as a solid shape, not text color. Never used for text or links.
 
 ### Neutral
 - **Paper** (oklch(1.000 0.000 0)): Page background. Pure white, no hidden warmth.

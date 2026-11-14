@@ -26,6 +26,10 @@ Defined in `src/styles/global.css` (`.bg-grid`, optional `.bg-grid-fade`), appli
 
 `src/components/ArticleCard.astro`: a solid orange block (`--color-orange`, `::before`, hard edge, no blur) sits offset down-left behind the card face. On hover only the card face lifts diagonally up-right, away from the block (colors unchanged); the block stays put. Footer row holds tags (left) and read time (right); description is muted ink. Tag chips (`Tags.astro`) use a 30% orange background (translucent, text stays solid) with text inheriting the parent color.
 
+## Card Button
+
+`src/components/CardButton.astro`: link styled like the pagination cards (white bordered face, orange offset block, face lifts up-right on hover). Used for the Articles/Projects buttons in `Hero.astro`.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

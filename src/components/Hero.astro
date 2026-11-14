@@ -1,6 +1,14 @@
+---
+import CardButton from './CardButton.astro';
+---
+
 <div class="hero">
 	<h1 id="syarif-ibrohim">Syarif Ibrohim</h1>
 	<div id="role">Backend Engineer</div>
+	<nav class="hero-actions">
+		<CardButton href="/articles">Articles</CardButton>
+		<CardButton href="/projects">Projects</CardButton>
+	</nav>
 </div>
 
 <style>
@@ -32,6 +40,14 @@
 		animation: hero-in 0.6s ease-out 0.3s forwards;
 	}
 
+	.hero-actions {
+		display: flex;
+		gap: 1.5rem;
+		margin-top: 1.5rem;
+		opacity: 0;
+		animation: hero-in 0.6s ease-out 0.5s forwards;
+	}
+
 	@keyframes hero-in {
 		from {
 			opacity: 0;
@@ -45,7 +61,8 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		#syarif-ibrohim,
-		#role {
+		#role,
+		.hero-actions {
 			animation: none;
 			opacity: 1;
 		}

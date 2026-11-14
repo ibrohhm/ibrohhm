@@ -1,0 +1,127 @@
+---
+interface Link {
+	slug: string;
+	title: string;
+}
+
+interface Props {
+	prev: Link | null;
+	next: Link | null;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+	(prev || next) && (
+		<nav class="article-nav">
+			{prev && (
+				<a class="article-nav__link article-nav__link--prev" href={`/article/${prev.slug}`}>
+					<span class="article-nav__face">
+						<span class="article-nav__label">← Previous</span>
+						<span class="article-nav__title">{prev.title}</span>
+					</span>
+				</a>
+			)}
+			{next && (
+				<a class="article-nav__link article-nav__link--next" href={`/article/${next.slug}`}>
+					<span class="article-nav__face">
+						<span class="article-nav__label">Next →</span>
+						<span class="article-nav__title">{next.title}</span>
+					</span>
+				</a>
+			)}
+		</nav>
+	)
+}
+
+<style>
+	.article-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid oklch(0.9 0.005 315);
+	}
+
+	.article-nav__link {
+		position: relative;
+		display: block;
+		margin: 0.5rem 0 0.5rem 0.25rem;
+		text-decoration: none;
+	}
+
+	.article-nav__link::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 8px;
+		background: var(--color-orange);
+		transform: translate(-0.25rem, 0.25rem);
+	}
+
+	.article-nav__face {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+		height: 100%;
+		box-sizing: border-box;
+		padding: 0.625rem 0.875rem;
+		border: 1px solid oklch(0.9 0.005 315);
+		border-radius: 8px;
+		background: var(--color-card);
+		transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+	}
+
+	.article-nav__link:hover .article-nav__face {
+		transform: translate(0.375rem, -0.375rem);
+	}
+
+	.article-nav__link--prev {
+		grid-column: 1;
+		justify-self: start;
+	}
+
+	.article-nav__link--next {
+		grid-column: 2;
+		justify-self: end;
+		text-align: right;
+	}
+
+	.article-nav__label {
+		font-family: var(--font-body);
+		font-size: 0.6875rem;
+		color: var(--color-muted);
+	}
+
+	.article-nav__title {
+		font-size: 0.9375rem;
+		line-height: 1.35;
+		font-weight: 600;
+		color: var(--color-ink);
+	}
+
+	@media (max-width: 600px) {
+		.article-nav {
+			grid-template-columns: 1fr;
+		}
+
+		.article-nav__link--next {
+			grid-column: 1;
+			justify-self: start;
+			text-align: left;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.article-nav__face {
+			transition: none;
+		}
+
+		.article-nav__link:hover .article-nav__face {
+			transform: none;
+		}
+	}
+</style>

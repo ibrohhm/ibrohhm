@@ -1,65 +1,98 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getArticles } from '../lib/articles';
+
+const latest = getArticles().slice(0, 3);
 ---
 
-<Layout title="Page not found — Syarif Ibrohim" description="This page doesn't exist.">
-	<div class="not-found">
+<Layout
+	title="Page not found — Syarif Ibrohim"
+	description="This page doesn't exist."
+	bodyClass="bg-grid bg-grid-fade"
+>
+	<main class="not-found">
 		<p class="code">404</p>
 		<h1>Page not found</h1>
-		<p class="message">That page doesn't exist, or the link is out of date.</p>
-		<a class="home-link" href="/">&larr; Back to homepage</a>
-	</div>
+		<p class="message">
+			That page doesn't exist, or the link is out of date. Sorry about that. These are the newest
+			articles, in case one of them is what you were looking for.
+		</p>
+		<ul>
+			{
+				latest.map((article) => (
+					<li>
+						<a href={article.url}>{article.title}</a>
+					</li>
+				))
+			}
+		</ul>
+		<a class="home-link" href="/">← Back to all articles</a>
+	</main>
 </Layout>
 
 <style>
 	.not-found {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: flex-start;
-		max-width: 640px;
+		width: min(760px, 100% - 40px);
 		margin: 0 auto;
-		padding: 2rem;
+		padding: 4rem 0 2rem;
+		font-family: var(--font-body);
 	}
 
 	.code {
-		font-family: var(--font-body);
-		font-size: 0.875rem;
-		font-weight: 500;
-		letter-spacing: 0.01em;
-		color: var(--color-muted);
 		margin: 0 0 0.5rem;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: var(--color-amber);
+	}
+
+	h1 {
+		margin: 0 0 1rem;
+		font-size: clamp(2rem, 4.2vw, 2.75rem);
+		color: var(--color-ink);
 	}
 
 	.message {
-		font-family: var(--font-body);
+		margin: 0 0 1.5rem;
 		font-size: 1.125rem;
-		line-height: 1.6;
-		color: var(--color-ink);
+		line-height: 1.65;
+		color: var(--color-body);
+	}
+
+	ul {
+		list-style: none;
 		margin: 0 0 2rem;
+		padding: 0;
+	}
+
+	li + li {
+		border-top: 1px solid oklch(0.89 0.008 315);
+	}
+
+	li a {
+		display: block;
+		padding: 0.875rem 0;
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	li a:hover {
+		color: var(--color-plum);
+		text-decoration: underline;
+		text-decoration-color: var(--color-orange);
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
 	}
 
 	.home-link {
-		font-family: var(--font-body);
 		font-size: 1rem;
-		font-weight: 500;
-		color: var(--color-ink);
+		font-weight: 600;
 		text-decoration: none;
-		width: fit-content;
-		border-bottom: 1px solid var(--color-ink);
-		padding-bottom: 0.2rem;
-		transition: color 0.2s, border-color 0.2s;
 	}
 
 	.home-link:hover {
-		color: var(--color-plum);
-		border-color: var(--color-plum);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.home-link {
-			transition: none;
-		}
+		text-decoration: underline;
+		text-decoration-color: var(--color-orange);
 	}
 </style>

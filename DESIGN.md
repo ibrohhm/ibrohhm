@@ -7,7 +7,8 @@ colors:
   orange: "oklch(0.72 0.16 55)"
   bg: "oklch(0.98 0 0)"
   surface: "oklch(0.96 0.005 315)"
-  ink: "oklch(0.18 0.02 315)"
+  ink: "oklch(0.2 0.02 315)"
+  body: "oklch(0.38 0.02 315)"
   muted: "oklch(0.48 0.01 315)"
 typography:
   h1:
@@ -74,13 +75,14 @@ Restrained-but-committed: a single deep plum carries identity across both pages;
 - **Plum Deep** (oklch(0.28 0.13 315) / #3f0553): Hover/active state for plum-filled elements.
 
 ### Secondary
-- **Amber** (oklch(0.52 0.14 70)): Small highlight moments only — inline emphasis marks, hover underline color on secondary links. Never carries large surface area.
-- **Orange** (oklch(0.72 0.16 55)): Used for the offset block behind each article card and the tag chip background (text inherits the parent color). Brighter than Amber so it reads as a solid shape, not text color. Never used for text or links.
+- **Amber** (oklch(0.52 0.14 70)): Small labels only: year headings in the article index, the "Newest" line on the newest-article card, category headings on /projects. Never carries large surface area.
+- **Orange** (oklch(0.72 0.16 55)): The offset block behind the newest-article card, link underlines on hover and the active nav item, and the tag chip background at 30%. Brighter than Amber so it reads as a solid shape, not text color. Never used for text.
 
 ### Neutral
 - **Paper** (oklch(1.000 0.000 0)): Page background. Pure white, no hidden warmth.
 - **Surface** (oklch(0.96 0.005 315)): Card/panel backgrounds, code inline background, subtle section dividers.
-- **Ink** (oklch(0.18 0.02 315)): Body text, headings.
+- **Ink** (oklch(0.2 0.02 315)): Headings, titles, dark borders on cards.
+- **Body** (oklch(0.38 0.02 315)): Paragraphs, summaries, intro copy.
 - **Muted** (oklch(0.48 0.01 315)): Secondary text — captions, metadata, timestamps.
 
 ### Named Rules
@@ -95,7 +97,7 @@ Restrained-but-committed: a single deep plum carries identity across both pages;
 **Character:** No display typeface carries the site's identity — headings are the same system sans as body, distinguished by size and weight (600 vs 400), not a font swap. Fragment Mono is reserved for code, where its terminal shape earns its place functionally instead of decoratively. (This project tried two display treatments before landing here: Fraunces first, flagged as the #1 reflex-reject editorial-serif default; then Fragment Mono as a "terminal-personal" identity font. Both were dropped in favor of plain weight-contrast hierarchy — simpler, and the writing carries the personality instead of the typeface.)
 
 ### Hierarchy
-- **H1** (600, clamp(2.25rem, 5vw, 3.5rem), 1.1): Page/article title only.
+- **H1** (600, about 2.25–3rem, -0.02em tracking): Page/article title only. On the homepage the H1 is the short greeting and an H2 (500 weight) carries the longer line.
 - **H2** (600, 2rem, 1.3): Section headings.
 - **H3** (600, 1.4rem): Minor section breaks. Sized at ≥1.25× body (1.125rem) to keep real scale contrast — don't let this drift back toward body size.
 - **Body** (400, 1.125rem, 1.7): Article prose, capped at ~70ch line length.
@@ -113,11 +115,21 @@ Flat by default. No drop shadows. Depth comes from the surface/paper contrast (s
 ### Links
 - **Style:** Plum text color, underline on hover only (not persistent), amber underline color on hover for a small warm accent.
 
-### Article Cards (homepage index)
-- **Shape:** 8px radius (md), Surface background against Paper page background.
-- **Content:** Title (H3) + one-line description, whole card is the link.
-- **Hover:** Background shifts slightly toward plum (`color-mix`), no shadow, no transform.
-- **Shadow Strategy:** None (see Elevation). One-column stacked list, not a grid — this isn't a card-grid site, cards here are a plain content index.
+### Newest-Article Card (homepage)
+- **Shape:** 10px radius, card background, 1.5px Ink border, solid Orange block offset down-left behind it (8px, hard edge).
+- **Content:** Amber line (Newest · date · read time), title (24px, 600), summary (Body), "Read the article →" link with Orange underline.
+- **Hover:** face lifts up-right 4px; the block stays put. Only card on the homepage, so the Orange block marks the newest piece.
+
+### Article Index
+- One link per row, grouped under Amber year headings. Row: date gutter (muted), title (22px, 600, Ink), one-line summary (Body), tags and read time (muted).
+- **States:** hover turns the title Plum with a 2px Orange underline; focus shows a 2px Plum outline at 6px offset; visited titles go slightly lighter. 150ms colour change, no movement.
+- Rows divided by a 1px hairline, not cards. Phones drop the summary and move the date under the title.
+
+### Tags
+- Pill chips: 999px radius, 13px medium Ink text on Orange at 30%. Used on article pages and as project chips on the homepage.
+
+### Article Header
+- "← All articles", tags, H1 (rendered by the layout, not the MDX body), description as a standfirst, then a byline (author · date · read time, optional "Builds on" link) between two hairlines. Previous/Next text links at the end (newest-first order).
 
 ### Blockquote
 - **Style:** Italic, muted ink color, no border, no background tint. A quiet aside, not a callout box.
@@ -127,7 +139,8 @@ Flat by default. No drop shadows. Depth comes from the surface/paper contrast (s
 - **Formula:** Centered, larger type (1.5rem), Surface background, used sparingly for a single equation-like statement (e.g. `pending requests = rate × duration`) — not for general emphasis.
 
 ### Navigation
-- Minimal: name/wordmark links home, plum active-state underline. No hamburger, no dropdown — the site is two page types (home, article).
+- In page flow (not fixed): name links home on the left; Articles, Projects, GitHub ↗ on the right. Active page is Plum with a 2px Orange underline. No hamburger; links stay inline on phones.
+- Footer: LinkedIn, GitHub, dev.to links only.
 
 ## 6. Do's and Don'ts
 

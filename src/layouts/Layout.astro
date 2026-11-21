@@ -1,4 +1,5 @@
 ---
+import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import '../styles/global.css';
 
@@ -41,5 +42,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://syarifib
 	<body class={bodyClass}>
 		<Header />
 		<slot />
+		<Footer />
 	</body>
 </html>

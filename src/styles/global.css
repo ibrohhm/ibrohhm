@@ -5,7 +5,8 @@
 	--color-bg: oklch(0.98 0 0);
 	--color-surface: oklch(0.96 0.005 315);
 	--color-card: oklch(0.99 0 0);
-	--color-ink: rgb(89, 89, 89);
+	--color-ink: oklch(0.2 0.02 315);
+	--color-body: oklch(0.38 0.02 315);
 	--color-muted: oklch(0.48 0.01 315);
 
 	--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
@@ -97,8 +98,8 @@ h3 {
 
 h1 {
 	font-size: clamp(2.25rem, 5vw, 3.5rem);
-	line-height: 1.1;
-	letter-spacing: 0.1em;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
 	margin: 0 0 2.5rem;
 }
 

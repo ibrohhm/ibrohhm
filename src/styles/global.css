@@ -9,7 +9,6 @@
 	--color-body: oklch(0.38 0.02 315);
 	--color-muted: oklch(0.48 0.01 315);
 
-	--font-display: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;
 	--font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
 		sans-serif;
 	--font-mono: 'Fragment Mono', 'SF Mono', Menlo, Consolas, monospace;

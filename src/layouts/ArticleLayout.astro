@@ -24,7 +24,13 @@ const next = current && currentIndex < articles.length - 1 ? articles[currentInd
 const buildsOn = current?.buildsOn ? articles.find((a) => a.slug === current.buildsOn) : undefined;
 ---
 
-<Layout title={pageTitle} description={pageDescription} ogType="article" bodyClass="bg-grid bg-grid-fade">
+<Layout
+	title={pageTitle}
+	description={pageDescription}
+	ogType="article"
+	bodyClass="bg-grid bg-grid-fade"
+	monoFont
+>
 	<main class="article">
 		<a class="back" href="/">← All articles</a>
 		<Tags tags={tags} />

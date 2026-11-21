@@ -1,13 +1,28 @@
 ---
+type Point = { x: number; y: number };
+
 interface Props {
-	data: { x: number; y: number }[];
+	data: Point[];
 	xLabel?: string;
 	yLabel?: string;
 	threshold?: { value: number; label: string };
 	crashed?: boolean;
+	color?: string;
+	label?: string;
+	compare?: { data: Point[]; label: string };
 }
 
-const { data, xLabel = '', yLabel = '', threshold, crashed = false } = Astro.props;
+const {
+	data,
+	xLabel = '',
+	yLabel = '',
+	threshold,
+	crashed = false,
+	color = 'var(--color-plum)',
+	label,
+	compare,
+} = Astro.props;
+const allData = compare ? [...data, ...compare.data] : data;
 
 const width = 480;
 const height = 220;
@@ -15,8 +30,8 @@ const padding = { top: 16, right: 16, bottom: 36, left: 48 };
 const plotWidth = width - padding.left - padding.right;
 const plotHeight = height - padding.top - padding.bottom;
 
-const maxX = Math.max(...data.map((d) => d.x));
-const rawMaxY = Math.max(...data.map((d) => d.y), threshold?.value ?? 0);
+const maxX = Math.max(...allData.map((d) => d.x));
+const rawMaxY = Math.max(...allData.map((d) => d.y), threshold?.value ?? 0);
 
 function niceNumber(x: number) {
 	if (x <= 0) return 1;
@@ -37,14 +52,16 @@ const formatTick = (v: number) => Number(v.toFixed(yDecimals)).toString();
 const toX = (x: number) => padding.left + (x / maxX) * plotWidth;
 const toY = (y: number) => padding.top + plotHeight - (y / maxY) * plotHeight;
 
-const points = data.map((d) => `${toX(d.x)},${toY(d.y)}`).join(' ');
+const toPoints = (series: Point[]) => series.map((d) => `${toX(d.x)},${toY(d.y)}`).join(' ');
+const points = toPoints(data);
 
 const yTickValues = Array.from({ length: tickCount + 1 }, (_, i) => i * step);
 
-const xTickValues = [...new Set(data.map((d) => d.x))].sort((a, b) => a - b);
+const xTickValues = [...new Set(allData.map((d) => d.x))].sort((a, b) => a - b);
 const baselineY = padding.top + plotHeight;
 ---
 
+<figure class="line-chart">
 <svg {width} {height} viewBox={`0 0 ${width} ${height}`}>
 	{
 		yTickValues.map((v) => (
@@ -91,8 +108,20 @@ const baselineY = padding.top + plotHeight;
 			</g>
 		)
 	}
-	<polyline points={points} fill="none" stroke="var(--color-plum)" stroke-width="2" />
 	{
+		compare && (
+			<polyline
+				points={toPoints(compare.data)}
+				fill="none"
+				stroke="var(--color-plum)"
+				stroke-width="2"
+				stroke-dasharray="6 5"
+			/>
+		)
+	}
+	<polyline points={points} fill="none" stroke={color} stroke-width={compare ? 2.5 : 2} />
+	{
+		!compare &&
 		data.map((d, i) => {
 			const isLast = i === data.length - 1;
 			const isCrashPoint = crashed && isLast;
@@ -101,7 +130,7 @@ const baselineY = padding.top + plotHeight;
 					cx={toX(d.x)}
 					cy={toY(d.y)}
 					r={isCrashPoint ? 5 : 3}
-					fill={isCrashPoint ? 'var(--color-amber)' : 'var(--color-plum)'}
+					fill={isCrashPoint ? 'var(--color-amber)' : color}
 				/>
 			);
 		})
@@ -127,3 +156,45 @@ const baselineY = padding.top + plotHeight;
 		{yLabel}
 	</text>
 </svg>
+{
+	compare && (
+		<figcaption>
+			<span><span class="swatch dashed" aria-hidden="true" />{compare.label}</span>
+			<span><span class="swatch" style={`background:${color}`} aria-hidden="true" />{label}</span>
+		</figcaption>
+	)
+}
+</figure>
+
+<style>
+	.line-chart {
+		margin: 0;
+	}
+
+	figcaption {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.5rem 1.5rem;
+		margin: -0.5rem 0 1.5rem;
+		font-family: var(--font-body);
+		font-size: 0.8125rem;
+		color: var(--color-body);
+	}
+
+	figcaption > span {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.swatch {
+		display: inline-block;
+		width: 20px;
+		height: 2.5px;
+	}
+
+	.swatch.dashed {
+		background: repeating-linear-gradient(90deg, var(--color-plum) 0 6px, transparent 6px 10px);
+	}
+</style>

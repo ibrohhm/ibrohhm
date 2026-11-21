@@ -28,6 +28,7 @@ Defined in `src/styles/global.css` (`.bg-grid`, optional `.bg-grid-fade`), appli
 - Content column is `min(760px, 100% - 40px)`; article body is `min(680px, 100% - 40px)`.
 - Article data comes from `src/lib/articles.ts` (`getArticles()`, `formatDate()`). It parses frontmatter from the raw `.mdx` source on purpose: importing the MDX modules from a layout they use causes an import cycle. Optional frontmatter `buildsOn: <slug>` shows a "Builds on" link in the article byline.
 - Article pages get their H1, standfirst (description), byline and Previous/Next links (newest-first order: Next is the older article) from `ArticleLayout.astro`. Do not add a `# Title` line inside the `.mdx` body.
+- Article components: `LineChart.astro` draws one series, or two when given `compare` (dashed plum) plus `label`/`color` for the main line and a legend. `CircuitStates.astro` is the Closed/Open/Half-open diagram used in the circuit breaker article.
 - Project data lives in `src/data/projects.ts`. `/projects` lists every project grouped by `category`. `featured: true` puts a project in "Things I've built" on the homepage; `article: <slug>` adds a related-article link.
 
 ## Homepage

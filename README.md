@@ -12,11 +12,12 @@ Backend Engineer. Portfolio and technical writing, live at [syarifibrohim.me](ht
 
 Technical writing on backend engineering, resilience patterns, and observability — see [/articles](https://syarifibrohim.me/articles).
 
-- [Building an Autonomous Agent Team That Replicates My Engineering Workflow](https://syarifibrohim.me/article/building-an-autonomous-agent-team)
-- [The Dangers of High-Cardinality Labels in Prometheus](https://syarifibrohim.me/article/high-cardinality-labels-in-prometheus)
-- [Circuit Breaker Pattern](https://syarifibrohim.me/article/circuit-breaker-pattern)
-- [Crash and Timeout Simulation](https://syarifibrohim.me/article/crash-and-timeout-simulation)
-- [Know Better About N+1 Queries Problem](https://syarifibrohim.me/article/know-better-about-n1-queries-problem)
+- [Leading cross-team initiatives: clarity, RFC, and handling disagreement](https://syarifibrohim.me/article/leading-cross-team-initiatives)
+- [Building an autonomous agent team that replicates my engineering workflow](https://syarifibrohim.me/article/building-an-autonomous-agent-team)
+- [The dangers of high-cardinality labels in Prometheus](https://syarifibrohim.me/article/high-cardinality-labels-in-prometheus)
+- [Circuit breaker pattern](https://syarifibrohim.me/article/circuit-breaker-pattern)
+- [Crash and timeout simulation](https://syarifibrohim.me/article/crash-and-timeout-simulation)
+- [Know better about the N+1 queries problem](https://syarifibrohim.me/article/know-better-about-n1-queries-problem)
 
 ## AI
 

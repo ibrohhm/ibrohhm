@@ -1,8 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getArticles } from '../lib/articles';
-
-const latest = getArticles().slice(0, 3);
 ---
 
 <Layout
@@ -14,18 +11,8 @@ const latest = getArticles().slice(0, 3);
 		<p class="code">404</p>
 		<h1>Page not found</h1>
 		<p class="message">
-			That page doesn't exist, or the link is out of date. Sorry about that. These are the newest
-			articles, in case one of them is what you were looking for.
+			That page doesn't exist, or the link is out of date. Sorry about that.
 		</p>
-		<ul>
-			{
-				latest.map((article) => (
-					<li>
-						<a href={article.url}>{article.title}</a>
-					</li>
-				))
-			}
-		</ul>
 		<a class="home-link" href="/">← Back to all articles</a>
 	</main>
 </Layout>
@@ -52,37 +39,10 @@ const latest = getArticles().slice(0, 3);
 	}
 
 	.message {
-		margin: 0 0 1.5rem;
+		margin: 0 0 2rem;
 		font-size: 1.125rem;
 		line-height: 1.65;
 		color: var(--color-body);
-	}
-
-	ul {
-		list-style: none;
-		margin: 0 0 2rem;
-		padding: 0;
-	}
-
-	li + li {
-		border-top: 1px solid oklch(0.89 0.008 315);
-	}
-
-	li a {
-		display: block;
-		padding: 0.875rem 0;
-		font-size: 1.125rem;
-		font-weight: 600;
-		color: var(--color-ink);
-		text-decoration: none;
-	}
-
-	li a:hover {
-		color: var(--color-plum);
-		text-decoration: underline;
-		text-decoration-color: var(--color-orange);
-		text-decoration-thickness: 2px;
-		text-underline-offset: 4px;
 	}
 
 	.home-link {

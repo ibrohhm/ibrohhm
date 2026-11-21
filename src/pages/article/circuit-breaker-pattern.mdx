@@ -4,12 +4,11 @@ title: Circuit Breaker Pattern
 description: Timeout stops your service from crashing, but it doesn't stop you from wasting time and resources on a partner you already know is down. Circuit breaker does.
 tags: [Go, Resilience, Circuit Breaker]
 createdAt: "2024-12-04"
+buildsOn: crash-and-timeout-simulation
 ---
 
 import LineChart from '../../components/LineChart.astro';
 import PlantUML from '../../components/PlantUML.astro';
-
-# Circuit Breaker Pattern
 
 Integrating with an external service often means dealing with unexpected behavior that impacts our service's performance.
 The [previous article](/article/crash-and-timeout-simulation) prevents the crash/OOM by adding a timeout.

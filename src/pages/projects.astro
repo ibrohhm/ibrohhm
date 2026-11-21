@@ -1,124 +1,153 @@
 ---
 import ProjectLayout from '../layouts/ProjectLayout.astro';
+import { categories, hostLabel, projects, type Project } from '../data/projects';
+import { getArticles } from '../lib/articles';
 
-const categories = [
-	{
-		title: 'AI',
-		projects: [
-			{ name: 'agent-team', url: 'https://github.com/ibrohhm/agent-team', description: 'Multi-agent team collaboration' },
-			{ name: 'jira-implementer', url: 'https://github.com/ibrohhm/jira-implementer', description: 'AI agent that implements Jira tickets' },
-			{ name: 'telegram-claude-bot', url: 'https://github.com/ibrohhm/telegram-claude-bot', description: 'Telegram bot powered by Claude AI' },
-			{ name: 'tickboard-mcp', url: 'https://github.com/ibrohhm/tickboard-mcp', description: 'MCP server for nested checklists with a React UI' },
-		],
-	},
-	{
-		title: 'Back End',
-		projects: [
-			{ name: 'clean-architecture', url: 'https://github.com/ibrohhm/clean-architecture', description: 'Implement Clean Architecture using Go' },
-			{ name: 'kafka-conductor-golang', url: 'https://github.com/ibrohhm/kafka-conductor-golang', description: 'Kafka consumer orchestration in Go' },
-			{ name: 'prometheus-grafana-golang', url: 'https://github.com/ibrohhm/prometheus-grafana-golang', description: 'Prometheus and Grafana monitoring setup with Go' },
-			{ name: 'crash and timeout simulation', url: 'https://github.com/ibrohhm/crash_and_timeout_simulation', description: 'Crash and timeout simulation' },
-			{ name: 'toggle-feature', url: 'https://github.com/ibrohhm/toggle-feature', description: 'Feature flag toggle implementation in Go' },
-			{ name: 'jwt-ruby', url: 'https://github.com/ibrohhm/jwt-ruby', description: 'JWT token-based auth with Ruby on Rails' },
-			{ name: 'golang-gin', url: 'https://github.com/ibrohhm/golang-gin', description: 'REST API boilerplate with Go and Gin' },
-			{ name: 'response', url: 'https://github.com/ibrohhm/response', description: 'Go HTTP response wrapper' },
-			{ name: 'prime-factors', url: 'https://github.com/ibrohhm/prime-factors', description: 'Benchmark checking prime factors with/without goroutines' },
-			{ name: 'sudoku-solver', url: 'https://github.com/ibrohhm/sudoku-solver', description: 'Sudoku solver using backtracking' },
-			{ name: 'go-mongodb', url: 'https://github.com/ibrohhm/go-mongodb', description: 'Simple CRUD using Go and MongoDB' },
-			{ name: 'learn-sinatra-crud-api', url: 'https://github.com/ibrohhm/learn-sinatra-crud-api', description: 'Simple CRUD using Sinatra Ruby' },
-		],
-	},
-	{
-		title: 'Front End',
-		projects: [
-			{ name: 'workflow-ui', url: 'https://github.com/ibrohhm/workflow-ui', description: 'Interactive flowchart canvas built with React Flow and Next.js' },
-			{ name: 'intranet-ui', url: 'https://github.com/ibrohhm/intranet-ui', description: 'Intranet dashboard UI' },
-			{ name: 'multi-window', url: 'https://github.com/ibrohhm/multi-window', description: 'Multi-window browser interaction' },
-			{ name: 'mimic-github', url: 'https://github.com/ibrohhm/mimic-github', description: 'GitHub UI clone' },
-			{ name: 'calendar-challenge', url: 'https://github.com/ibrohhm/calendar-challenge', description: 'Calendar UI challenge' },
-			{ name: 'Snake Game', url: 'https://codepen.io/colorcreate/details/WNQbrar', description: 'Snake game' },
-			{ name: 'webpack-vue-buefy', url: 'https://github.com/ibrohhm/webpack-vue-buefy', description: 'Vue.js starter with Webpack and Buefy' },
-			{ name: 'Gravity Balls', url: 'https://codepen.io/colorcreate/pen/BOzKMP', description: 'Ball movements around a single gravity point' },
-			{ name: 'Rain Balls', url: 'https://codepen.io/colorcreate/pen/rZLeKB', description: 'Falling ball movements' },
-			{ name: 'Prime Count', url: 'https://codepen.io/colorcreate/pen/ZMOOEG', description: 'Finding the next prime number' },
-			{ name: 'Color Touch', url: 'https://codepen.io/colorcreate/pen/VGmeZX', description: 'Touch-reactive color effect' },
-			{ name: 'Banana', url: 'https://ibrohhm.github.io/banana/', description: 'Banana everywhere' },
-		],
-	},
-];
+const articleTitles = new Map(getArticles().map((a) => [a.slug, a.title]));
+const groups = categories
+	.map((category) => ({ category, items: projects.filter((p) => p.category === category) }))
+	.filter((g) => g.items.length > 0);
+
+function relatedTitle(project: Project) {
+	return project.article ? articleTitles.get(project.article) : undefined;
+}
 ---
 
-<ProjectLayout title="Projects — Syarif Ibrohim" description="Backend, frontend, and AI projects.">
-	<h1>Projects</h1>
-	<p class="subtitle">Things I've built, experimented with, and brought to life.</p>
+<ProjectLayout
+	title="Things I've built — Syarif Ibrohim"
+	description="Small experiments from learning a language, a pattern or a tool."
+>
+	<a class="back" href="/">← Back to articles</a>
+	<h1>Things I've built</h1>
+	<p class="intro">
+		Made while learning a language, a pattern or a tool. Most are experiments rather than finished
+		products, and a few of the older ones I'd write differently today.
+	</p>
 
-	<div class="project-categories">
-		{
-			categories.map((category) => (
-				<div class="project-category">
-					<h2>{category.title}</h2>
-					<ul class="project-list">
-						{category.projects.map((project) => (
-							<li class="project-item">
-								<a class="project-item--title" href={project.url} target="_blank" rel="noopener noreferrer">
+	{
+		groups.map((group) => (
+			<section>
+				<h2>
+					{group.category} · {group.items.length}
+				</h2>
+				<ul class="rows">
+					{group.items.map((project) => (
+						<li>
+							<div class="text">
+								<a class="name" href={project.url} target="_blank" rel="noopener noreferrer">
 									{project.name}
 								</a>
-								<div class="project-item--description">{project.description}</div>
-							</li>
-						))}
-					</ul>
-				</div>
-			))
-		}
-	</div>
+								<span class="description">{project.description}</span>
+								{relatedTitle(project) && (
+									<a class="related" href={`/article/${project.article}`}>
+										Related article: {relatedTitle(project)}
+									</a>
+								)}
+							</div>
+							<span class="host" aria-hidden="true">{hostLabel(project.url)} ↗</span>
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
 </ProjectLayout>
 
 <style>
-	.subtitle {
-		margin-top: -1.5rem;
-		margin-bottom: 3rem;
-		color: var(--color-muted);
+	.back {
+		display: inline-block;
+		margin-bottom: 1.25rem;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		text-decoration: none;
 	}
 
-	.project-categories {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 2rem;
-		align-items: start;
+	h1 {
+		margin: 0 0 1.125rem;
+		font-size: clamp(2rem, 4.2vw, 2.75rem);
+		color: var(--color-ink);
 	}
 
-	@media (max-width: 700px) {
-		.project-categories {
-			grid-template-columns: 1fr;
-		}
+	.intro {
+		margin: 0 0 1rem;
+		font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+		line-height: 1.65;
+		color: var(--color-body);
 	}
 
-	.project-list{
-		padding-left: 0;
+	h2 {
+		margin: 2.5rem 0 0;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		letter-spacing: 0;
+		color: var(--color-amber);
+	}
+
+	.rows {
 		list-style: none;
-		margin: 0 0 2rem;
+		margin: 0;
+		padding: 0;
+	}
 
-		.project-item{
-			margin-bottom: 0.75rem;
-			line-height: 1.6;
+	.rows li {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 2rem;
+		padding: 1.125rem 0;
+	}
 
-			.project-item--title{
-				display: block;
-				color: inherit;
-				text-decoration: none;
-				font-size: 1rem;
-				transition: font-size 0.15s;
-			}
+	.rows li + li {
+		border-top: 1px solid oklch(0.89 0.008 315);
+	}
 
-			.project-item--title:hover {
-				text-decoration: underline;
-				font-size: 1.1rem;
-			}
+	.text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
 
-			.project-item--description{
-				color: gray;
-				font-size: 12px;
-			}
+	.name {
+		font-size: 1.1875rem;
+		font-weight: 600;
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	.name:hover {
+		color: var(--color-plum);
+		text-decoration: underline;
+		text-decoration-color: var(--color-orange);
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+	}
+
+	.description {
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--color-body);
+	}
+
+	.related {
+		font-size: 0.9375rem;
+		font-weight: 500;
+	}
+
+	.host {
+		flex-shrink: 0;
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1.9rem;
+		color: var(--color-plum);
+	}
+
+	@media (max-width: 600px) {
+		.rows li {
+			gap: 1rem;
+		}
+
+		.host {
+			font-size: 0.8125rem;
 		}
 	}
 </style>

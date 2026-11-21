@@ -1,12 +1,253 @@
 ---
-import Hero from '../components/Hero.astro';
+import ArticleIndex from '../components/ArticleIndex.astro';
 import Layout from '../layouts/Layout.astro';
+import { projects } from '../data/projects';
+import { formatDate, getArticles } from '../lib/articles';
+
+const [newest, ...earlier] = getArticles();
+const featured = projects.filter((p) => p.featured);
 ---
 
 <Layout
 	title="Syarif Ibrohim — Backend Engineer"
-	description="Building software, one system at a time. Portfolio and technical writing."
-	bodyClass="bg-grid no-scroll"
+	description="Notes on building backend systems, written as I learn."
+	bodyClass="bg-grid bg-grid-fade"
 >
-	<Hero />
+	<main>
+		<section class="intro column">
+			<h1>Hi, I'm Syarif.</h1>
+			<h2>These are my notes on building backend systems, written as I learn.</h2>
+			<p>
+				Mostly Go, databases and monitoring, with the occasional piece on working across teams and,
+				lately, AI agents.
+			</p>
+		</section>
+
+		<div class="column">
+			<a class="newest" href={newest.url}>
+				<span class="face">
+					<span class="kicker">
+						Newest · {formatDate(newest.createdAt)} · {newest.readingMinutes} min read
+					</span>
+					<span class="newest-title">{newest.title}</span>
+					<span class="newest-description">{newest.description}</span>
+					<span class="read">Read the article →</span>
+				</span>
+			</a>
+		</div>
+
+		<ArticleIndex articles={earlier} heading="Earlier articles" />
+
+		<section class="built column" aria-labelledby="built-heading">
+			<h2 id="built-heading">Things I've built</h2>
+			<p>
+				Small experiments from learning a language, a pattern or a tool. A few are tidy, most are not.
+				Some are the code behind the articles above.
+			</p>
+			<ul>
+				{
+					featured.map((project) => (
+						<li>
+							<a href={project.url} target="_blank" rel="noopener noreferrer">
+								{project.name}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+			<a class="all" href="/projects">See all {projects.length} projects →</a>
+		</section>
+	</main>
 </Layout>
+
+<style>
+	.column {
+		width: min(760px, 100% - 40px);
+		margin: 0 auto;
+		font-family: var(--font-body);
+	}
+
+	.intro {
+		padding: 3.5rem 0 4rem;
+	}
+
+	.intro h1 {
+		margin: 0 0 0.25rem;
+		font-size: clamp(2.25rem, 5vw, 3rem);
+		line-height: 1.1;
+		color: var(--color-ink);
+	}
+
+	.intro h2 {
+		margin: 0 0 1.25rem;
+		font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+		line-height: 1.25;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		color: var(--color-ink);
+	}
+
+	.intro p {
+		margin: 0;
+		font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+		line-height: 1.65;
+		color: var(--color-body);
+	}
+
+	.newest {
+		position: relative;
+		display: block;
+		margin-left: 0.5rem;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.newest::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 10px;
+		background: var(--color-orange);
+		transform: translate(-0.5rem, 0.5rem);
+	}
+
+	.face {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		padding: 1.5rem 1.75rem;
+		border: 1.5px solid var(--color-ink);
+		border-radius: 10px;
+		background: var(--color-card);
+		transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+	}
+
+	.newest:hover .face {
+		transform: translate(0.25rem, -0.25rem);
+	}
+
+	.newest:focus-visible {
+		outline: none;
+	}
+
+	.newest:focus-visible .face {
+		outline: 2px solid var(--color-plum);
+		outline-offset: 4px;
+	}
+
+	.kicker {
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--color-amber);
+	}
+
+	.newest-title {
+		font-size: 1.5rem;
+		line-height: 1.3;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: var(--color-ink);
+		text-wrap: balance;
+	}
+
+	.newest-description {
+		font-size: 1rem;
+		line-height: 1.55;
+		color: var(--color-body);
+	}
+
+	.read {
+		align-self: flex-start;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: var(--color-plum);
+		text-decoration: underline;
+		text-decoration-color: var(--color-orange);
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+	}
+
+	.built {
+		margin-top: 4.5rem;
+		padding-top: 1.75rem;
+		border-top: 1.5px solid var(--color-ink);
+	}
+
+	.built h2 {
+		margin: 0 0 0.75rem;
+		font-size: 1.875rem;
+		letter-spacing: -0.01em;
+		color: var(--color-ink);
+	}
+
+	.built p {
+		margin: 0 0 1rem;
+		font-size: 1.0625rem;
+		line-height: 1.6;
+		color: var(--color-body);
+	}
+
+	.built ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.625rem;
+		list-style: none;
+		margin: 0 0 1.25rem;
+		padding: 0;
+	}
+
+	.built li a {
+		display: inline-block;
+		padding: 0.4rem 0.875rem;
+		border-radius: 999px;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		color: var(--color-ink);
+		background: color-mix(in oklch, var(--color-orange) 30%, transparent);
+		text-decoration: none;
+	}
+
+	.built li a:hover {
+		background: color-mix(in oklch, var(--color-orange) 45%, transparent);
+	}
+
+	.all {
+		font-size: 1rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.all:hover {
+		text-decoration: underline;
+		text-decoration-color: var(--color-orange);
+	}
+
+	@media (max-width: 600px) {
+		.intro {
+			padding: 1.75rem 0 2.25rem;
+		}
+
+		.face {
+			padding: 1.125rem;
+		}
+
+		.newest-title {
+			font-size: 1.25rem;
+		}
+
+		.built {
+			margin-top: 3rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.face {
+			transition: none;
+		}
+
+		.newest:hover .face {
+			transform: none;
+		}
+	}
+</style>

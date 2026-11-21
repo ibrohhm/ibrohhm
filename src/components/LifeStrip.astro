@@ -1,0 +1,178 @@
+---
+---
+
+<div class="life-strip" aria-hidden="true">
+	<canvas></canvas>
+</div>
+
+<style>
+	.life-strip {
+		position: relative;
+		height: 97px;
+		margin-top: 3.5rem;
+		background: oklch(0.95 0.003 315);
+		border-block: 1px solid oklch(0.84 0.012 315);
+		box-shadow:
+			inset 0 10px 16px -6px oklch(0.2 0.02 315 / 0.2),
+			inset 0 2px 3px oklch(0.2 0.02 315 / 0.08),
+			inset 0 -2px 2px oklch(1 0 0 / 0.8);
+		cursor: crosshair;
+		overflow: hidden;
+	}
+
+	canvas {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	@media (max-width: 600px) {
+		.life-strip {
+			margin-top: 2.25rem;
+		}
+	}
+</style>
+
+<script>
+	const CELL = 12;
+	const ROWS = 8;
+	const STEP_MS = 250;
+	const COLORS = ['#4A1660', '#6B2C91', '#9A6DB5', '#CDB6DC', '#F08A3C'];
+
+	const strip = document.querySelector<HTMLElement>('.life-strip');
+	const canvas = strip?.querySelector('canvas');
+	const ctx = canvas?.getContext('2d');
+
+	if (strip && canvas && ctx) {
+		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let cols = 0;
+		let cells = new Uint8Array(0);
+		let hover: { c: number; r: number } | null = null;
+		let painting = false;
+		let visible = true;
+		let timer: number | undefined;
+
+		const idx = (c: number, r: number) => r * cols + c;
+
+		function seed(density = 0.2) {
+			cells = new Uint8Array(cols * ROWS).map(() => (Math.random() < density ? 1 : 0));
+		}
+
+		function step(): boolean {
+			const next = new Uint8Array(cells.length);
+			let changed = false;
+			for (let r = 0; r < ROWS; r++) {
+				for (let c = 0; c < cols; c++) {
+					let n = 0;
+					for (let dr = -1; dr <= 1; dr++) {
+						for (let dc = -1; dc <= 1; dc++) {
+							if (dr || dc) n += cells[idx((c + dc + cols) % cols, (r + dr + ROWS) % ROWS)];
+						}
+					}
+					const alive = cells[idx(c, r)];
+					const live = n === 3 || (alive === 1 && n === 2) ? 1 : 0;
+					next[idx(c, r)] = live;
+					if (live !== alive) changed = true;
+				}
+			}
+			cells = next;
+			return changed;
+		}
+
+		function draw() {
+			const w = canvas!.width / devicePixelRatio;
+			const h = canvas!.height / devicePixelRatio;
+			ctx!.clearRect(0, 0, w, h);
+
+			ctx!.strokeStyle = 'oklch(0.89 0.008 315)';
+			ctx!.lineWidth = 1;
+			ctx!.beginPath();
+			for (let x = 0; x <= w; x += CELL) {
+				ctx!.moveTo(x + 0.5, 0);
+				ctx!.lineTo(x + 0.5, h);
+			}
+			for (let y = 0; y <= h; y += CELL) {
+				ctx!.moveTo(0, y + 0.5);
+				ctx!.lineTo(w, y + 0.5);
+			}
+			ctx!.stroke();
+
+			for (let r = 0; r < ROWS; r++) {
+				for (let c = 0; c < cols; c++) {
+					if (!cells[idx(c, r)]) continue;
+					ctx!.fillStyle = COLORS[(c * 7 + r * 13) % COLORS.length];
+					ctx!.fillRect(c * CELL + 1, r * CELL + 1, CELL - 1, CELL - 1);
+				}
+			}
+
+			if (hover) {
+				ctx!.strokeStyle = '#5F1E77';
+				ctx!.lineWidth = 1.5;
+				ctx!.strokeRect(hover.c * CELL + 1.25, hover.r * CELL + 1.25, CELL - 1.5, CELL - 1.5);
+			}
+		}
+
+		function resize() {
+			const rect = strip!.getBoundingClientRect();
+			const nextCols = Math.ceil(rect.width / CELL);
+			canvas!.width = Math.round(rect.width * devicePixelRatio);
+			canvas!.height = Math.round(rect.height * devicePixelRatio);
+			ctx!.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+			if (nextCols !== cols) {
+				cols = nextCols;
+				seed();
+				for (let i = 0; i < 25; i++) step();
+			}
+			draw();
+		}
+
+		function tick() {
+			const changed = step();
+			const empty = !cells.some(Boolean);
+			if (!changed || empty) seed();
+			draw();
+		}
+
+		function sync() {
+			const shouldRun = !reducedMotion && visible && !document.hidden;
+			if (shouldRun && timer === undefined) timer = window.setInterval(tick, STEP_MS);
+			if (!shouldRun && timer !== undefined) {
+				window.clearInterval(timer);
+				timer = undefined;
+			}
+		}
+
+		function cellAt(e: PointerEvent) {
+			const rect = canvas!.getBoundingClientRect();
+			const c = Math.floor((e.clientX - rect.left) / CELL);
+			const r = Math.floor((e.clientY - rect.top) / CELL);
+			return c >= 0 && c < cols && r >= 0 && r < ROWS ? { c, r } : null;
+		}
+
+		canvas.addEventListener('pointermove', (e) => {
+			hover = cellAt(e);
+			if (painting && hover) cells[idx(hover.c, hover.r)] = 1;
+			draw();
+		});
+		canvas.addEventListener('pointerleave', () => {
+			hover = null;
+			painting = false;
+			draw();
+		});
+		canvas.addEventListener('pointerdown', (e) => {
+			const cell = cellAt(e);
+			if (!cell) return;
+			painting = true;
+			cells[idx(cell.c, cell.r)] ^= 1;
+			draw();
+		});
+		window.addEventListener('pointerup', () => (painting = false));
+
+		new ResizeObserver(resize).observe(strip);
+		new IntersectionObserver(([entry]) => {
+			visible = entry.isIntersecting;
+			sync();
+		}).observe(strip);
+		document.addEventListener('visibilitychange', sync);
+	}
+</script>

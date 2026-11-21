@@ -1,0 +1,179 @@
+---
+import { formatDate, type Article } from '../lib/articles';
+
+interface Props {
+	articles: Article[];
+	heading: string;
+	headingLevel?: 'h1' | 'h2';
+}
+
+const { articles, heading, headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+
+const years = [...new Set(articles.map((a) => a.createdAt.slice(0, 4)))];
+const byYear = years.map((year) => ({
+	year,
+	articles: articles.filter((a) => a.createdAt.startsWith(year)),
+}));
+---
+
+<section class="article-index" aria-labelledby="article-index-heading">
+	<Heading id="article-index-heading">{heading}</Heading>
+	{
+		byYear.map((group) => (
+			<div class="year">
+				<h3>{group.year}</h3>
+				<ul>
+					{group.articles.map((article) => (
+						<li>
+							<a class="row" href={article.url}>
+								<time datetime={article.createdAt}>{formatDate(article.createdAt, false)}</time>
+								<span class="body">
+									<span class="title">{article.title}</span>
+									<span class="description">{article.description}</span>
+									<span class="meta">
+										{article.tags.join(', ')}
+										<span aria-hidden="true"> · </span>
+										{article.readingMinutes} min read
+									</span>
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		))
+	}
+</section>
+
+<style>
+	.article-index {
+		width: min(760px, 100% - 40px);
+		margin: 0 auto;
+		padding-top: 5.5rem;
+		font-family: var(--font-body);
+	}
+
+	.article-index > :is(h1, h2) {
+		margin: 0 0 1.25rem;
+		font-size: 1.875rem;
+		letter-spacing: -0.01em;
+		color: var(--color-ink);
+	}
+
+	.year {
+		padding-top: 1.25rem;
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: var(--color-amber);
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	li + li {
+		border-top: 1px solid oklch(0.89 0.008 315);
+	}
+
+	.row {
+		display: grid;
+		grid-template-columns: 4.5rem 1fr;
+		gap: 2rem;
+		padding: 1.5rem 0;
+		color: inherit;
+		text-decoration: none;
+		border-radius: 6px;
+	}
+
+	.row:focus-visible {
+		outline: 2px solid var(--color-plum);
+		outline-offset: 6px;
+	}
+
+	time {
+		font-size: 0.9375rem;
+		line-height: 1.9rem;
+		color: var(--color-muted);
+	}
+
+	.body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.title {
+		font-size: 1.375rem;
+		line-height: 1.35;
+		font-weight: 600;
+		color: var(--color-ink);
+		text-wrap: balance;
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 4px;
+		transition:
+			color 150ms cubic-bezier(0.25, 1, 0.5, 1),
+			text-decoration-color 150ms cubic-bezier(0.25, 1, 0.5, 1);
+	}
+
+	.row:hover .title {
+		color: var(--color-plum);
+		text-decoration-color: var(--color-orange);
+	}
+
+	.row:visited .title {
+		color: oklch(0.32 0.04 315);
+	}
+
+	.description {
+		font-size: 1.0625rem;
+		line-height: 1.6;
+		color: var(--color-body);
+		text-wrap: pretty;
+	}
+
+	.meta {
+		font-size: 0.875rem;
+		color: var(--color-muted);
+	}
+
+	@media (max-width: 600px) {
+		.article-index {
+			padding-top: 3.5rem;
+		}
+
+		.row {
+			grid-template-columns: 1fr;
+			gap: 0.25rem;
+			padding: 1rem 0;
+		}
+
+		time {
+			order: 2;
+			line-height: 1.4;
+			font-size: 0.8125rem;
+		}
+
+		.title {
+			font-size: 1.1875rem;
+		}
+
+		.description {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.title {
+			transition: none;
+		}
+	}
+</style>
